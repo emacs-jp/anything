@@ -1617,8 +1617,13 @@ automatically.")
 ;;; Specialized keymaps
 ;;
 ;;
+(defun anything-c-make-child-map (parent)
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map parent)
+    map))
+
 (defvar anything-c-buffer-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "C-c ?")     'anything-c-buffer-help)
     ;; No need to have separate command for grep and zgrep
     ;; as we don't use recursivity for buffers.
@@ -1642,7 +1647,7 @@ automatically.")
   "Keymap for buffer sources in anything.")
 
 (defvar anything-find-files-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "C-]")           'anything-ff-run-toggle-basename)
     (define-key map (kbd "C-x C-f")       'anything-ff-run-locate)
     (define-key map (kbd "M-g s")         'anything-ff-run-grep)
@@ -1691,7 +1696,7 @@ automatically.")
   "Keymap for `anything-find-files'.")
 
 (defvar anything-c-read-file-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "C-]")           'anything-ff-run-toggle-basename)
     (define-key map (kbd "C-.")           'anything-find-files-down-one-level)
     (define-key map (kbd "C-l")           'anything-find-files-down-one-level)
@@ -1707,7 +1712,7 @@ automatically.")
   "Keymap for `anything-c-read-file-name'.")
 
 (defvar anything-generic-files-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "M-g s")   'anything-ff-run-grep)
     (define-key map (kbd "M-g z")   'anything-ff-run-zgrep)
     (define-key map (kbd "M-g p")   'anything-ff-run-pdfgrep)
@@ -1723,7 +1728,7 @@ automatically.")
   "Generic Keymap for files.")
 
 (defvar anything-c-grep-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "M-<down>") 'anything-c-goto-next-file)
     (define-key map (kbd "M-<up>")   'anything-c-goto-precedent-file)
     (define-key map (kbd "C-c o")    'anything-c-grep-run-other-window-action)
@@ -1737,7 +1742,7 @@ automatically.")
   "Keymap used in Grep sources.")
 
 (defvar anything-c-pdfgrep-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "M-<down>") 'anything-c-goto-next-file)
     (define-key map (kbd "M-<up>")   'anything-c-goto-precedent-file)
     (define-key map (kbd "C-w")      'anything-yank-text-at-point)
@@ -1746,7 +1751,7 @@ automatically.")
   "Keymap used in pdfgrep.")
 
 (defvar anything-c-etags-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "M-<down>") 'anything-c-goto-next-file)
     (define-key map (kbd "M-<up>")   'anything-c-goto-precedent-file)
     (define-key map (kbd "C-w")      'anything-yank-text-at-point)
@@ -1755,7 +1760,7 @@ automatically.")
   "Keymap used in Etags.")
 
 (defvar anything-eval-expression-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "<C-return>") 'anything-eval-new-line-and-indent)
     (define-key map (kbd "<tab>")      'lisp-indent-line)
     (define-key map (kbd "<C-tab>")    'lisp-complete-symbol)
@@ -1768,7 +1773,7 @@ automatically.")
     map))
 
 (defvar anything-c-ucs-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "<C-backspace>") 'anything-c-ucs-persistent-delete)
     (define-key map (kbd "<C-left>")      'anything-c-ucs-persistent-backward)
     (define-key map (kbd "<C-right>")     'anything-c-ucs-persistent-forward)
@@ -1778,7 +1783,7 @@ automatically.")
   "Keymap for `anything-ucs'.")
 
 (defvar anything-c-bookmark-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "C-c o") 'anything-c-bookmark-run-jump-other-window)
     (define-key map (kbd "C-d")   'anything-c-bookmark-run-delete)
     (when (locate-library "bookmark-extensions")
@@ -1788,26 +1793,26 @@ automatically.")
   "Generic Keymap for emacs bookmark sources.")
 
 (defvar anything-esh-on-file-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "C-c ?")    'anything-esh-help)
     map)
   "Keymap for `anything-find-files-eshell-command-on-file'.")
 
 (defvar anything-eshell-history-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "M-p") 'anything-next-line)
     map)
   "Keymap for `anything-eshell-history'.")
 
 (defvar anything-kill-ring-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "M-y") 'anything-next-line)
     (define-key map (kbd "M-u") 'anything-previous-line)
     map)
   "Keymap for `anything-show-kill-ring'.")
 
 (defvar anything-occur-map
-  (let ((map (copy-keymap anything-map)))
+  (let ((map (anything-c-make-child-map anything-map)))
     (define-key map (kbd "C-M-%") 'anything-occur-run-query-replace-regexp)
     map)
   "Keymap for `anything-occur'.")
