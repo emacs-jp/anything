@@ -8000,6 +8000,7 @@ If load is non--nil load the file and feed `yaoddmuse-pages-hash'."
     (persistent-action . (lambda (item)
                            (ee-to item)
                            (anything-match-line-color-current-line)))
+    (migemo)
     (persistent-help . "Show this entry")
     (action . (("Goto link" . ee-to)))))
 
