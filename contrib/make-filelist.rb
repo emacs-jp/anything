@@ -40,10 +40,10 @@ def ls(dir)
   end
   dirs = []
   Dir.foreach(dir) do |f|
-    next if $EXCLUDE_PATH.include? f
-    next if $EXCLUDE_REGEXP.match f
-    f = File.join dir, f
     begin
+      next if $EXCLUDE_PATH.include? f
+      next if $EXCLUDE_REGEXP.match f
+      f = File.join dir, f
       stat = File.lstat f
       abbrev = f.sub(ENV['HOME'], '~') if ENV['HOME']
       if stat.directory? and not stat.symlink?
@@ -53,7 +53,7 @@ def ls(dir)
         puts abbrev
       end
     rescue
-      $stderr.puts $!
+      $stderr.puts "#{dir}/#{f}: #$!"
     end
   end
   dirs.each do |d|
