@@ -597,10 +597,11 @@ Grep is run by asynchronous process."
   "Faster version of grep-candidates candidates function.
 Grep is run by synchronous process.
 It is faster when candidate files are in ramdisk."
-  (split-string
-   (shell-command-to-string
-    (agp-command-line-2 filter (anything-attr-defined 'search-from-end)))
-   "\n"))
+  (let ((x (split-string
+            (shell-command-to-string
+             (agp-command-line-2 filter (anything-attr-defined 'search-from-end)))
+            "\n")))
+    (unless (equal x '("")) x)))
 
 (defun agp-candidates-synchronous-grep--direct-insert-match (&optional filter)
   "[EXPERIMENTAL]Fastest version of grep-candidates candidates function at the cost of absense of transformers.
