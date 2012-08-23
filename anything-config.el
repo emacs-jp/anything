@@ -2384,11 +2384,13 @@ Default is `anything-current-buffer'."
     (require 'org) ; On some old Emacs versions org may not be loaded.
     (org-reveal)))
 
-(defun anything-goto-line (lineno &optional noanim)
+(defun anything-goto-line (lineno &optional noanim show-top)
   "Goto LINENO opening only outline headline if needed.
 Animation is used unless NOANIM is non--nil."
   (goto-char (point-min))
   (anything-goto-char (point-at-bol lineno))
+  (when show-top
+    (set-window-start (get-buffer-window) (point)))
   (unless noanim
     (anything-match-line-color-current-line)
     (sit-for 0.3)
@@ -10797,10 +10799,9 @@ directory, open this directory."
       (funcall it))
   (when file (funcall find-file-function file))
   (if (anything-attr-defined 'adjust)
-      (anything-c-goto-line-with-adjustment lineno content)
-      (anything-goto-line lineno))
-  (unless (anything-attr-defined 'recenter)
-    (set-window-start (get-buffer-window anything-current-buffer) (point)))
+      (anything-c-goto-line-with-adjustment
+       lineno content (not (anything-attr-defined 'recenter)))
+    (anything-goto-line lineno nil (not (anything-attr-defined 'recenter))))
   (anything-aif (anything-attr 'after-jump-hook)
       (funcall it))
   (when anything-in-persistent-action
@@ -10814,7 +10815,7 @@ directory, open this directory."
 
 ;; borrowed from etags.el
 ;; (anything-c-goto-line-with-adjustment (line-number-at-pos) ";; borrowed from etags.el")
-(defun anything-c-goto-line-with-adjustment (line line-content)
+(defun anything-c-goto-line-with-adjustment (line line-content &optional show-top)
   (let ((startpos)
         offset found pat)
     ;; This constant is 1/2 the initial search window.
@@ -10827,7 +10828,7 @@ directory, open this directory."
                           "\\(^\\|\^m\\) *" "^ *") ;allow indent
                       (regexp-quote line-content)))
     ;; If no char pos was given, try the given line number.
-    (setq startpos (progn (anything-goto-line line) (point)))
+    (setq startpos (progn (anything-goto-line line nil show-top) (point)))
     (or startpos (setq startpos (point-min)))
     ;; First see if the tag is right at the specified location.
     (goto-char startpos)
