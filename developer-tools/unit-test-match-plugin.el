@@ -7,18 +7,6 @@
 (dont-compile
   (when (fboundp 'expectations)
     (expectations
-      (desc "amp-mp-make-regexps")
-      (expect '("")
-        (amp-mp-make-regexps ""))
-      (expect '("foo" "bar")
-        (amp-mp-make-regexps "foo bar"))
-      (expect '("foo" "bar")
-        (amp-mp-make-regexps " foo bar"))
-      (expect '("foo" "bar")
-        (amp-mp-make-regexps " foo bar "))
-      (expect '("foo bar" "baz")
-        (let ((anything-mp-space-regexp "\\\\ "))
-          (amp-mp-make-regexps "foo\\ bar baz")))
       (desc "anything-mp-3-get-patterns-internal")
       (expect '((identity . "foo"))
         (anything-mp-3-get-patterns-internal "foo"))
@@ -51,55 +39,6 @@
         (agp-command-line "foo" '("/f1") 5 "nkf -w" t))
       (expect "tac /f1 | head -n 5 | nkf -w"
         (agp-command-line "" '("/f1") 5 "nkf -w" t))
-      (desc "anything-exact-match")
-      (expect (non-nil)
-        (anything-exact-match "thunder" "thunder"))
-      (expect nil
-        (anything-exact-match "thunder" "fire"))
-      (desc "anything-exact-search")
-      (expect (non-nil)
-        (with-temp-buffer
-          (insert "fire\nthunder\n")
-          (goto-char 1)
-          (anything-exact-search "thunder" nil t)))
-      (expect (non-nil)
-        (with-temp-buffer
-          (insert "\nfire\nthunder\n")
-          (goto-char 1)
-          (anything-exact-search "fire" nil t)))
-      (desc "anything-prefix-search")
-      (expect (non-nil)
-        (with-temp-buffer
-          (insert "fire\nthunder\n")
-          (goto-char (point-min))
-          (anything-prefix-search "thund" nil t)))
-      (expect nil
-        (with-temp-buffer
-          (insert "fire\nthunder\n")
-          (goto-char (point-min))
-          (anything-prefix-search "hund" nil t)))
-      (desc "anything-prefix-search-backward")
-      (expect (non-nil)
-        (with-temp-buffer
-          (insert "fire\nthunder\n")
-          (goto-char (point-max))
-          (anything-prefix-search-backward "thund" nil t)))
-      (expect nil
-        (with-temp-buffer
-          (insert "fire\nthunder\n")
-          (goto-char (point-max))
-          (anything-prefix-search-backward "hund" nil t)))
-      (desc "amp-mp-1-make-regexp")
-      (expect "a.*b"
-        (amp-mp-1-make-regexp "a b"))
-      (expect "a b"
-        (let ((anything-mp-space-regexp "\\\\ "))
-          (amp-mp-1-make-regexp "a\\ b")))
-      (expect "a.*b c"
-        (let ((anything-mp-space-regexp "\\\\ "))
-          (amp-mp-1-make-regexp "a b\\ c")))
-      (expect ""
-        (amp-mp-1-make-regexp ""))
       (desc "anything-mp-1-search")
       (expect (non-nil)
         (with-temp-buffer
@@ -116,7 +55,7 @@
         (with-temp-buffer
           (insert "fire\nthunder\n")
           (goto-char 1)
-          (anything-mp-2-search "th+ r" nil t)))
+          (anything-mp-2-search "r th+" nil t)))
       (desc "anything-mp-3-search")
       (expect (non-nil)
         (with-temp-buffer
@@ -238,7 +177,7 @@
       (expect (non-nil)
         (anything-mp-2-match "thunder" "h+ r"))
       (expect nil
-        (anything-mp-2-match "thunder" "th+ r"))
+        (anything-mp-2-match "thunder" "r th+"))
       (desc "anything-mp-3-match")
       (expect (non-nil)
         (anything-mp-3-match "thunder" "h+ r"))
@@ -253,12 +192,6 @@
       (desc "anything-mp-3-match not")
       (expect (non-nil)
         (anything-mp-3-match "threshold" "th !der"))
-      (desc "anything-prefix-match")
-      (expect (non-nil)
-        (anything-prefix-match "fobar" "fo"))
-      (expect nil
-        (anything-prefix-match "xfobar" "fo"))
-
       (desc "anything-mp-3-match")
       (expect (non-nil)
         (anything-mp-3-match "thunder" "h der"))
@@ -395,7 +328,7 @@
                                   '(anything-compile-source--candidates-in-buffer
                                     anything-compile-source--match-plugin)))
       ;; prefix multi -> multi
-      (expect '(("FOO" ("elisp-info" "info.el")))
+      (expect '(("FOO" ("info.el" "elisp-info")))
         (anything-test-candidates '(((name . "FOO")
                                      (init
                                       . (lambda ()
@@ -418,64 +351,5 @@
                                   "info !elisp"
                                   '(anything-compile-source--candidates-in-buffer
                                     anything-compile-source--match-plugin)))
-      ;; anything-mp-match-source-name
-      (expect '(("SourceName" ("foo")))
-        (let ((anything-mp-match-source-name t))
-          (anything-test-candidates '(((name . "SourceName")
-                                       (candidates "foo" "bar")))
-                                    "source f"
-                                    '(anything-compile-source--match-plugin))))
-      (expect '(("SourceName cib" ("foo")))
-        (let ((anything-mp-match-source-name t))
-          (anything-test-candidates '(((name . "SourceName cib")
-                                       (init
-                                        . (lambda ()
-                                            (with-current-buffer (anything-candidate-buffer 'global)
-                                              (insert "foo\nbar\n"))))
-                                       (candidates-in-buffer)))
-                                    "source f"
-                                    '(anything-compile-source--candidates-in-buffer
-                                      anything-compile-source--match-plugin))))
-      (expect '(("SourceName cib search-from-end" ("bar")))
-        (let ((anything-mp-match-source-name t))
-          (anything-test-candidates '(((name . "SourceName cib search-from-end")
-                                       (init
-                                        . (lambda ()
-                                            (with-current-buffer (anything-candidate-buffer 'global)
-                                              (insert "foo\nbar\n"))))
-                                       (search-from-end)
-                                       (candidates-in-buffer)))
-                                    "source b"
-                                    '(anything-compile-source--candidates-in-buffer
-                                      anything-compile-source--match-plugin))))
-      (expect '(("SourceName" ("foo" "bar")))
-        (let ((anything-mp-match-source-name t))
-          (anything-test-candidates '(((name . "SourceName")
-                                       (candidates "foo" "bar")))
-                                    "source ."
-                                    '(anything-compile-source--match-plugin))))
-      (expect '(("SourceName cib" ("foo" "bar")))
-        (let ((anything-mp-match-source-name t))
-          (anything-test-candidates '(((name . "SourceName cib")
-                                       (init
-                                        . (lambda ()
-                                            (with-current-buffer (anything-candidate-buffer 'global)
-                                              (insert "foo\nbar\n"))))
-                                       (candidates-in-buffer)))
-                                    "source ."
-                                    '(anything-compile-source--candidates-in-buffer
-                                      anything-compile-source--match-plugin))))
-      (expect '(("SourceName cib search-from-end" ("bar" "foo")))
-        (let ((anything-mp-match-source-name t))
-          (anything-test-candidates '(((name . "SourceName cib search-from-end")
-                                       (init
-                                        . (lambda ()
-                                            (with-current-buffer (anything-candidate-buffer 'global)
-                                              (insert "foo\nbar\n"))))
-                                       (search-from-end)
-                                       (candidates-in-buffer)))
-                                    "source ."
-                                    '(anything-compile-source--candidates-in-buffer
-                                      anything-compile-source--match-plugin))))
       )))
 ;; (anything-compile-sources '(((name . "test"))) anything-compile-source-functions)
