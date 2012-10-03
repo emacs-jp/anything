@@ -395,10 +395,12 @@ This is done only if `anything-mp-3-pattern-str' is same as PATTERN."
   "Return a list of predicate/regexp cons cells.
 e.g ((identity . \"foo\") (identity . \"bar\"))."
   (unless (string= pattern "")
-    (loop for pat in (anything-mp-make-regexps pattern)
-          collect (if (string= "!" (substring pat 0 1))
-                      (cons 'not (substring pat 1))
-                      (cons 'identity pat)))))
+    (if (string-match "^!" pattern)
+        (anything-mp-3-get-patterns-internal (concat ". " pattern))
+      (loop for pat in (anything-mp-make-regexps pattern)
+            collect (if (string= "!" (substring pat 0 1))
+                        (cons 'not (substring pat 1))
+                      (cons 'identity pat))))))
 
 (defun anything-mp-3-match (str &optional pattern)
   "Check if PATTERN match STR.

@@ -14,6 +14,8 @@
         (anything-mp-3-get-patterns-internal "foo bar"))
       (expect '((identity . "foo") (not . "bar"))
         (anything-mp-3-get-patterns-internal "foo !bar"))
+      (expect '((identity . ".") (not . "bar") (identity . "foo"))
+        (anything-mp-3-get-patterns-internal "!bar foo"))
       (desc "agp-command-line")
       (expect "grep -ih foo /f1"
         (agp-command-line "foo" '("/f1")))
@@ -103,7 +105,7 @@
         (with-temp-buffer
           (insert "threshold\nthunder\n")
           (goto-char 1)
-          (anything-mp-3-search "th !der" nil t)))
+          (anything-mp-3-search "!der h" nil t)))
       (desc "anything-mp-3p-search")
       (expect (non-nil)
         (with-temp-buffer
@@ -147,7 +149,7 @@
         (with-temp-buffer
           (insert "threshold\nthunder\n")
           (goto-char (point-max))
-          (anything-mp-3-search-backward "th !der" nil t)))
+          (anything-mp-3-search-backward "!der h" nil t)))
       (desc "anything-mp-3p-search-backward")
       (expect (non-nil)
         (with-temp-buffer
@@ -192,6 +194,8 @@
       (desc "anything-mp-3-match not")
       (expect (non-nil)
         (anything-mp-3-match "threshold" "th !der"))
+      (expect (non-nil)
+        (anything-mp-3-match "threshold" "!der th"))
       (desc "anything-mp-3-match")
       (expect (non-nil)
         (anything-mp-3-match "thunder" "h der"))
@@ -334,8 +338,7 @@
                                       . (lambda ()
                                           (with-current-buffer (anything-candidate-buffer 'global)
                                             (insert "info.el\nelisp-info\n"))))
-                                     (candidates-in-buffer)
-                                     ))
+                                     (candidates-in-buffer)))
                                   "el info"
                                   '(anything-compile-source--candidates-in-buffer
                                     anything-compile-source--match-plugin)))
@@ -346,10 +349,29 @@
                                       . (lambda ()
                                           (with-current-buffer (anything-candidate-buffer 'global)
                                             (insert "info.el\nelisp-info\n"))))
-                                     (candidates-in-buffer)
-                                     ))
+                                     (candidates-in-buffer)))
                                   "info !elisp"
                                   '(anything-compile-source--candidates-in-buffer
                                     anything-compile-source--match-plugin)))
+      (expect '(("FOO" ("info.el")))
+        (anything-test-candidates '(((name . "FOO")
+                                     (init
+                                      . (lambda ()
+                                          (with-current-buffer (anything-candidate-buffer 'global)
+                                            (insert "info.el\nelisp-info\n"))))
+                                     (candidates-in-buffer)))
+                                  "!elisp info"
+                                  '(anything-compile-source--candidates-in-buffer
+                                    anything-compile-source--match-plugin)))
+      (expect '(("FOO" ("info.el")))
+        (anything-test-candidates '(((name . "FOO")
+                                     (candidates "info.el" "elisp-info.el")))
+                                  "info !elisp"
+                                  '(anything-compile-source--match-plugin)))
+      (expect '(("FOO" ("info.el")))
+        (anything-test-candidates '(((name . "FOO")
+                                     (candidates "info.el" "elisp-info.el")))
+                                  "!elisp info"
+                                  '(anything-compile-source--match-plugin)))
       )))
 ;; (anything-compile-sources '(((name . "test"))) anything-compile-source-functions)
