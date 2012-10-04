@@ -1,7 +1,5 @@
 ;;; unit-test-match-plugin.el -- unit-tests for match-plugin.
 
-;; WARNING: Some test here are deprecated, some functions/macros have been removed.
-
 ;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations.el")
 ;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/el-mock.el")
 (dont-compile
