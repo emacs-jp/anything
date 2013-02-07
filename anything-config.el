@@ -7856,8 +7856,8 @@ http://en.wikipedia.org/wiki/Ruby_Document_format")
 http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations.el")
 
 (defvar anything-c-source-emacs-lisp-toplevels
-  '((name . "Emacs Lisp Toplevel / Level 3 Comment / Linkd Star")
-    (headline . "^(\\|(@\\*\\|^;;;")
+  '((name . "Emacs Lisp Toplevel / Level 3 Comment / Linkd Star / interactive")
+    (headline . "^(\\|(@\\*\\|^;;;\\|(interactive\\b")
     (get-line . buffer-substring)
     (condition . (eq major-mode 'emacs-lisp-mode))
     (adjust))
