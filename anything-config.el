@@ -11571,8 +11571,10 @@ with original attribute value.
 (defun anything-compile-source--type-customize (source)
   (anything-aif (assoc-default (assoc-default 'type source)
                                anything-additional-type-attributes)
-      (append it source)
+      (append source it)
     source))
+(setq anything-compile-source-functions
+      (delete 'anything-compile-source--type anything-compile-source-functions))
 (add-to-list 'anything-compile-source-functions
              'anything-compile-source--type-customize t)
 
