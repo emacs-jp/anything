@@ -11569,8 +11569,10 @@ with original attribute value.
 (put 'anything-c-arrange-type-attribute 'lisp-indent-function 1)
 
 (defun anything-compile-source--type-customize (source)
-  (anything-aif (assoc-default (assoc-default 'type source)
-                               anything-additional-type-attributes)
+  (anything-aif (or (assoc-default (assoc-default 'type source)
+                                   anything-additional-type-attributes)
+                    (assoc-default (assoc-default 'type source)
+                                   anything-type-attributes))
       (append source it)
     source))
 (setq anything-compile-source-functions
