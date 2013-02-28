@@ -10879,7 +10879,9 @@ It is added to `extended-command-history'.
     (if (stringp (symbol-function cmd))
         (execute-kbd-macro (symbol-function cmd))
         (setq this-command cmd)
-        (call-interactively cmd))))
+        (unwind-protect
+            (call-interactively cmd)
+          (run-with-timer 0.1 nil 'set 'last-repeatable-command cmd)))))
 
 ;;;###autoload
 (defun anything-c-set-variable (var)
