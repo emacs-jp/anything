@@ -218,6 +218,12 @@ For example, normalizing many Japanese encodings to EUC-JP,
 set this variable to \"ruby -rkconv -pe '$_.replace $_.toeuc'\".
 The command is converting standard input to EUC-JP line by line. ")
 
+(defvar anything-grep-repository-root-function (if (require 'repository-root nil t)
+                                                     'repository-root
+                                                   nil)
+  "*If non-nil, a function that returns the current file's repository root directory.
+The function is called with a single string argument (a file name) and should
+return either nil, or a string, which is the root directory of that file's repository.")
 
 ;; (@* "core")
 (defvar anything-grep-sources nil
@@ -441,6 +447,34 @@ It asks QUERY and NAME for location name.
 Difference with `anything-grep-by-name' is prompt order."
   (interactive (agrep-by-name-read-info (quote name) (quote query)))
   (anything-grep-by-name query name))
+
+;;; repository root
+(defun agrep-repository-root (filename)
+  "Attempt to deduce the current file's repository root directory.
+You should customize `anything-grep-repository-root-function' and provide a function that
+does the actual work, based of the type of SCM tool that you're using."
+  (if (null filename)
+      nil
+    (let* ((directory (file-name-directory filename))
+           (repository-root (if (and anything-grep-repository-root-function
+                                     (functionp anything-grep-repository-root-function))
+                                (apply anything-grep-repository-root-function (list filename))
+                              nil)))
+      (or repository-root directory))))
+
+(defun anything-grep-repository (command)
+  "Run `anything-grep' in repository."
+  (interactive
+   (progn
+     (grep-compute-defaults)
+     (let ((default (grep-default-command)))
+       (list (read-from-minibuffer (format "Run grep in %s (like this): "
+                                           (agrep-repository-root buffer-file-name))
+				   (if current-prefix-arg
+				       default grep-command)
+				   nil nil 'grep-history
+				   (if current-prefix-arg nil default))))))
+  (anything-grep command (agrep-repository-root buffer-file-name)))
 
 ;;;; unit test
 ;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations.el")
