@@ -462,20 +462,32 @@ does the actual work, based of the type of SCM tool that you're using."
                               nil)))
       (or repository-root directory))))
 
-(defun anything-grep-repository (command)
+(defun anything-grep-repository-1 (command)
   "Run `anything-grep' in repository."
   (interactive
    (progn
      (grep-compute-defaults)
      (let ((default (grep-default-command)))
-       (list (read-from-minibuffer (format "Run grep in %s (like this): "
-                                           (agrep-repository-root buffer-file-name))
-				   (if current-prefix-arg
-				       default grep-command)
-				   nil nil 'grep-history
-				   (if current-prefix-arg nil default))))))
+       (list (read-from-minibuffer
+              (format "Run grep in %s (like this): "
+                      (agrep-repository-root
+                       (or buffer-file-name default-directory)))
+              (if current-prefix-arg
+                  default grep-command)
+              nil nil 'grep-history
+              (if current-prefix-arg nil default))))))
   (anything-grep command (agrep-repository-root buffer-file-name)))
 
+(defun anything-grep-repository (&optional query)
+  "Do `anything-grep' from predefined location.
+It asks NAME for location name and QUERY."
+  (interactive (list (agrep-by-name-read-info 'query)))
+  (grep-compute-defaults)
+  (anything-grep-repository-1
+   (format (concat grep-command " %s")
+           (shell-quote-argument query))))
+
+;;; visited file
 ;;;; unit test
 ;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations.el")
 ;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/el-mock.el")
