@@ -6858,8 +6858,8 @@ Work both with standard Emacs bookmarks and bookmark-extensions.el."
 C-u \\[anything-execute-persistent-action]: Open URL with Firefox"))
   "Needs w3m and emacs-w3m.
 
-http://w3m.sourceforge.net/
-http://emacs-w3m.namazu.org/")
+w3m: http://w3m.sourceforge.net/
+emacs-w3m: http://emacs-w3m.namazu.org/")
 
 
 (defun anything-c-w3m-bookmarks-get-value (elm)
@@ -7285,8 +7285,8 @@ If FILE is nil return nil."
     (action . anything-semantic-default-action)
     "Needs semantic in CEDET.
 
-http://cedet.sourceforge.net/semantic.shtml
-http://cedet.sourceforge.net/"))
+semantic: http://cedet.sourceforge.net/semantic.shtml
+CEDET: http://cedet.sourceforge.net/"))
 
 
 
@@ -11901,8 +11901,8 @@ Where db_path is a filename matched by
 
 Needs w3m and emacs-w3m.
 
-http://w3m.sourceforge.net/
-http://emacs-w3m.namazu.org/"
+w3m: http://w3m.sourceforge.net/
+emacs-w3m: http://emacs-w3m.namazu.org/"
   (interactive)
   (anything-other-buffer 'anything-c-source-w3m-bookmarks
                          "*anything w3m bookmarks*"))
