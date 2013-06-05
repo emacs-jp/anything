@@ -375,7 +375,7 @@ Its contents is fontified grep result."
                (expand-file-name (substring file-line-content
                                             0 (match-beginning 0))
                                  (anything-attr 'pwd))))
-    (goto-line (string-to-number (match-string 1 file-line-content))))
+    (anything-goto-line (string-to-number (match-string 1 file-line-content))))
   (run-hooks 'anything-grep-goto-hook))
 
 ;; (@* "simple grep interface")
