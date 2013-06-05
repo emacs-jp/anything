@@ -476,7 +476,7 @@ does the actual work, based of the type of SCM tool that you're using."
                   default grep-command)
               nil nil 'grep-history
               (if current-prefix-arg nil default))))))
-  (anything-grep command (agrep-repository-root buffer-file-name)))
+  (anything-grep command (agrep-repository-root (or buffer-file-name default-directory))))
 
 (defun anything-grep-repository (&optional query)
   "Do `anything-grep' from predefined location.
