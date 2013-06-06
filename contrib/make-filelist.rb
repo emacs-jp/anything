@@ -39,13 +39,14 @@ def ls(dir)
     return
   end
   dirs = []
+  home_re = /^#{Regexp.quote(ENV['HOME'])}/ if ENV['HOME']
   Dir.foreach(dir) do |f|
     begin
       next if $EXCLUDE_PATH.include? f
       next if $EXCLUDE_REGEXP.match f
       f = File.join dir, f
       stat = File.lstat f
-      abbrev = f.sub(ENV['HOME'], '~') if ENV['HOME']
+      abbrev = f.sub(home_re, '~') if ENV['HOME']
       if stat.directory? and not stat.symlink?
         puts "#{abbrev}/"
         dirs << f
