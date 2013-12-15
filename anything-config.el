@@ -8974,7 +8974,7 @@ See also `anything-create--actions'.")
     (type . timer)))
 
 (defun anything-c-timer-real-to-display (timer)
-  (destructuring-bind (triggered t1 t2 t3 repeat-delay func args idle-delay)
+  (destructuring-bind (triggered t1 t2 t3 repeat-delay func args idle-delay _)
       (append timer nil)                ;use `append' to convert vector->list
     (format "%s repeat=%5S %s(%s)"
             (let ((time (list t1 t2 t3)))
