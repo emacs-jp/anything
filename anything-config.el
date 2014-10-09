@@ -11301,7 +11301,7 @@ candidate can be in (DISPLAY . REAL) format."
 (defun anything-outline-goto-near-line ()
   (with-anything-window
     ;; TODO need consideration whether to update position by every input.
-    (when t ; (equal anything-pattern "")
+    (unless (anything-empty-buffer-p) ;  when t                   ; (equal anything-pattern "")
       (anything-goto-line 2)
       (let ((lineno (with-anything-current-buffer
                       (line-number-at-pos (car anything-current-position)))))
