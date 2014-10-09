@@ -370,7 +370,7 @@
 ;; `anything-eval-expression'
 ;; Preconfigured anything for `anything-c-source-evaluation-result'.
 ;; `anything-eval-expression-with-eldoc'
-;; Preconfigured anything for `anything-c-source-evaluation-result' with `eldoc' support. 
+;; Preconfigured anything for `anything-c-source-evaluation-result' with `eldoc' support.
 ;; `anything-calcul-expression'
 ;; Preconfigured anything for `anything-c-source-calculation-result'.
 ;; `anything-surfraw'
@@ -503,7 +503,7 @@
 ;; `anything-ff-avfs-directory'
 ;; Default Value: nil
 ;; `anything-ff-file-compressed-list'
-;; Default Value:	("gz" "bz2" "zip" "7z") 
+;; Default Value:	("gz" "bz2" "zip" "7z")
 ;; `anything-locate-db-file-regexp'
 ;; Default Value: "m?locate.db$"
 ;; `anything-c-locate-command'
@@ -1919,7 +1919,7 @@ Enjoy!")))
   "== Anything Buffer ==
 \nTips:
 You can enter a partial name of major-mode (e.g lisp, sh) to narrow down buffers.
-Enter then a space and a pattern to narrow down to buffers matching this pattern. 
+Enter then a space and a pattern to narrow down to buffers matching this pattern.
 \nSpecific commands for `anything-buffers-list':
 \\<anything-c-buffer-map>
 \\[anything-buffer-run-zgrep]\t\t->Grep Buffer(s) works as zgrep too. (C-u grep all buffers but non--file buffers).
@@ -1960,7 +1960,7 @@ Enter then a space and a pattern to narrow down to buffers matching this pattern
 - Use `C-u C-z' to watch an image.
 - To browse images directories turn on `anything-follow-mode' and navigate with arrow keys.
 - When entered ediff, hitting `C-g' will ask you to use locate to find the file to ediff with.
- 
+
 \nSpecific commands for `anything-find-files':
 \\<anything-find-files-map>
 \\[anything-ff-run-locate]\t\t->Run Locate on basename of candidate (C-u to specify locate db).
@@ -2024,7 +2024,7 @@ Enter then a space and a pattern to narrow down to buffers matching this pattern
 \\[anything-read-file-name-help]\t\t->Display this help info.
 \n== Anything Map ==
 \\{anything-map}")
-  
+
 ;;;###autoload
 (defun anything-read-file-name-help ()
   (interactive)
@@ -2083,7 +2083,7 @@ You can save your results in a grep-mode buffer, see below.
 \\[anything-grep-help]\t\t->Show this help.
 \n== Anything Map ==
 \\{anything-map}")
-  
+
 ;;;###autoload
 (defun anything-grep-help ()
   (interactive)
@@ -2103,7 +2103,7 @@ You can save your results in a grep-mode buffer, see below.
 \\[anything-pdfgrep-help]\t\t->Show this help.
 \n== Anything Map ==
 \\{anything-map}")
-  
+
 ;;;###autoload
 (defun anything-pdfgrep-help ()
   (interactive)
@@ -2146,7 +2146,7 @@ You can save your results in a grep-mode buffer, see below.
 
 \n== Anything Map ==
 \\{anything-map}")
-  
+
 (defun anything-c-ucs-help ()
   "Help command for `anything-ucs'."
   (interactive)
@@ -2612,7 +2612,7 @@ MATCH match only filenames matching regexp MATCH."
                                 ;; Don't recurse in directory symlink.
                                 (unless (file-symlink-p f)
                                   (ls-R f)))
-                      else do 
+                      else do
                       (unless (and ,match (not (string-match ,match (file-name-nondirectory f))))
                         (push (funcall fn f) result)))))
        (ls-R ,directory)
@@ -2898,7 +2898,7 @@ If REGEXP-FLAG is given use `query-replace-regexp'."
   (let ((fn     (if regexp-flag 'query-replace-regexp 'query-replace))
         (prompt (if regexp-flag "Query replace regexp" "Query replace"))
         (bufs   (anything-marked-candidates)))
-    (loop 
+    (loop
           with replace = (query-replace-read-from prompt regexp-flag)
           with tostring = (unless (consp replace)
                             (query-replace-read-to
@@ -3233,7 +3233,7 @@ ACTION must be an action supported by `anything-dired-action'."
   (let ((bname  (anything-c-basename candidate))
         (prompt (if merge "Ediff Merge `%s' With File: "
                     "Ediff `%s' With File: "))
-        (fun    (if merge 'ediff-merge-files 'ediff-files))) 
+        (fun    (if merge 'ediff-merge-files 'ediff-files)))
     (funcall fun
              candidate
              (condition-case quit
@@ -3425,7 +3425,7 @@ will not be loaded first time you use this."
       ;; if a prefix arg have been passed during the
       ;; `anything-comp-read' call.
       (setq current-prefix-arg anything-current-prefix-arg)
-      ;; MAP have been set before calling `anything-comp-read' 
+      ;; MAP have been set before calling `anything-comp-read'
       ;; by `anything-current-prefix-arg'.
       (if (and (or map ; prefix-arg
                    (and alias-value
@@ -3433,13 +3433,13 @@ will not be loaded first time you use this."
                         ;; more than one arg i.e $*.
                         (string-match "\\$\\*$" alias-value)))
                (> (length cand-list) 1))
-          
+
           ;; Run eshell-command with ALL marked files as arguments.
           (let ((mapfiles (mapconcat 'shell-quote-argument cand-list " ")))
             (if (string-match "'%s'\\|\"%s\"\\|%s" command)
                 (eshell-command (format command mapfiles)) ; See [1]
                 (eshell-command (format "%s %s" command mapfiles))))
-          
+
           ;; Run eshell-command on EACH marked files.
           (loop for i in cand-list
                 for bn = (anything-c-basename i)
@@ -3587,7 +3587,7 @@ See `anything-ff-serial-rename-1'."
   (anything-ff-serial-rename-action 'copy))
 
 (defun anything-c-quit-and-execute-action (action)
-  "Quit current anything session and execute ACTION." 
+  "Quit current anything session and execute ACTION."
   (setq anything-saved-action action)
   (anything-exit-minibuffer))
 
@@ -4300,7 +4300,7 @@ in `anything-find-files-persistent-action'."
   "Execute `anything-ff-kill-buffer-fname' whitout quitting."
   (interactive)
   (when (anything-file-completion-source-p)
-    (anything-attrset 'kill-buffer-fname 'anything-ff-kill-buffer-fname)  
+    (anything-attrset 'kill-buffer-fname 'anything-ff-kill-buffer-fname)
     (anything-execute-persistent-action 'kill-buffer-fname)))
 
 (defun anything-ff-human-size (size)
@@ -4399,7 +4399,7 @@ is non--nil."
   (if (and (string-match tramp-file-name-regexp anything-pattern)
            anything-ff-tramp-not-fancy)
       (if anything-ff-transformer-show-only-basename
-          (loop for i in files collect 
+          (loop for i in files collect
                 (if (string-match "[.]\\{1,2\\}$" i)
                     i (cons (anything-c-basename i) i)))
           files)
@@ -5037,7 +5037,7 @@ Keys description:
 - PERSISTENT-HELP: persistent help message."
   (when (get-buffer anything-action-buffer)
     (kill-buffer anything-action-buffer))
-  
+
   ;; Assume completion have been already required,
   ;; so always use 'confirm.
   (when (eq must-match 'confirm-after-completion)
@@ -5047,7 +5047,7 @@ Keys description:
            (if marked-candidates
                (anything-marked-candidates)
                (identity candidate))))
-  
+
     (let* ((anything-mp-highlight-delay nil)
            ;; Be sure we don't erase the underlying minibuffer if some.
            (anything-ff-auto-update-initial-value
@@ -5066,7 +5066,7 @@ Keys description:
                              (make-composed-keymap
                               must-match-map anything-c-read-file-map)
                              anything-c-read-file-map)))
-      
+
       (or (anything
            :sources
            `(((name . ,(format "%s History" name))
@@ -5210,7 +5210,7 @@ See also `anything-locate'."
             ('gnu/linux "locate -i -r %s")
             ('berkeley-unix "locate -i %s")
             ('windows-nt "es -i -r %s")
-            (t "locate %s"))))  
+            (t "locate %s"))))
   (let ((anything-c-locate-command
          (if db
              (replace-regexp-in-string
@@ -7241,7 +7241,7 @@ If FILE is nil return nil."
 
 ;;; Semantic
 ;;
-;; 
+;;
 (defvar anything-semantic-candidates nil)
 
 (defun anything-semantic-construct-candidates (tags depth)
@@ -8024,9 +8024,7 @@ If load is non--nil load the file and feed `yaoddmuse-pages-hash'."
     (condition . (eq major-mode 'org-mode))
     (migemo)
     (subexp . 1)
-    (persistent-action . (lambda (elm)
-                           (anything-c-action-line-goto elm)
-                           (org-cycle)))
+    (persistent-action . anything-c-action-line-goto)
     (action-transformer
      . (lambda (actions candidate)
          '(("Go to Line" . anything-c-action-line-goto)
@@ -8268,7 +8266,7 @@ http://bbdb.sourceforge.net/")
   "Return eldoc in mode-line for current minibuffer input."
   (let ((buf (with-selected-window (minibuffer-window)
                (buffer-name))))
-    (when (member buf anything-eldoc-active-minibuffers-list)  
+    (when (member buf anything-eldoc-active-minibuffers-list)
       (let* ((str-all (with-current-buffer buf
                         (minibuffer-completion-contents)))
              (sym     (when str-all
@@ -9652,7 +9650,7 @@ Keys description:
 
 - DEFAULT: This option is used only for compatibility with regular
   Emacs `completing-read'.
- 
+
 - BUFFER: Name of anything-buffer.
 
 - MUST-MATCH: Candidate selected must be one of COLLECTION.
@@ -9695,7 +9693,7 @@ Keys description:
 - CANDIDATES-IN-BUFFER: when non--nil use a source build with
   `anything-candidates-in-buffer' which is much faster.
   Argument VOLATILE have no effect when CANDIDATES-IN-BUFFER is non--nil.
- 
+
 Any prefix args passed during `anything-comp-read' invocation will be recorded
 in `anything-current-prefix-arg', otherwise if prefix args were given before
 `anything-comp-read' invocation, the value of `current-prefix-arg' will be used.
@@ -9922,7 +9920,7 @@ It should be used when candidate list don't need to rebuild dynamically."
             inherit-input-method)
   "An anything replacement of `completing-read'.
 This function should be used only as a `completing-read-function'.
- 
+
 Don't use it directly, use instead `anything-comp-read' in your programs.
 
 See documentation of `completing-read' and `all-completions' for details."
@@ -10284,7 +10282,7 @@ If `anything-c-turn-on-show-completion' is nil just do nothing."
          (target     (and beg end (buffer-substring-no-properties beg end)))
          (candidates (all-completions target (nth 2 data) pred))
          (anything-quit-if-no-candidate t)
-         
+
          (anything-execute-action-at-once-if-one t)
          (anything-match-plugin-enabled
           (member 'anything-compile-source--match-plugin
