@@ -58,7 +58,7 @@
 ;;  http://petdance.com/ack/
 
 
-   
+
 ;;; History:
 
 ;; $Log: anything-grep.el,v $
@@ -159,6 +159,7 @@
 (defvar anything-grep-version "$Id: anything-grep.el,v 1.27 2010-03-21 11:31:04 rubikitch Exp $")
 (require 'anything-config)
 (require 'grep)
+(require 'format-spec)
 
 (defvar anything-grep-save-buffers-before-grep nil
   "Do `save-some-buffers' before performing `anything-grep'.")
@@ -431,7 +432,6 @@ It asks COMMAND for grep command line and PWD for current directory."
     (if (cdr result)                    ; length >= 1
         result
       (car result))))
-
 (defun anything-grep-by-name (&optional query name)
   "Do `anything-grep' from predefined location.
 It asks NAME for location name and QUERY."
@@ -445,8 +445,11 @@ It asks NAME for location name and QUERY."
         (anything-grep-base
          (mapcar (lambda (args)
                    (destructuring-bind (cmd dir) args
-                     (agrep-source (format (agrep-preprocess-command cmd)
-                                           (shell-quote-argument query)) dir)))
+                     (agrep-source
+                      (format-spec (agrep-preprocess-command cmd)
+                                   `((?s . ,(shell-quote-argument query))
+                                     (?a . ,query)))
+                      dir)))
                  it)
          (format "*anything grep:%s [%s]" query name)))
     (error "no such name %s" name)))
