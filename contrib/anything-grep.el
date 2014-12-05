@@ -414,7 +414,9 @@ It asks COMMAND for grep command line and PWD for current directory."
   "The last used name by `anything-grep-by-name'.")
 
 (defun agrep-by-name-read-info (&rest kinds)
-  (let* ((default (or (thing-at-point 'symbol) ""))
+  (let* ((default (or (and (region-active-p)
+                           (buffer-substring (region-beginning) (region-end)))
+                      (thing-at-point 'symbol) ""))
          (result (mapcar (lambda (kind)
                            (case kind
                              ('query (read-string
@@ -425,6 +427,7 @@ It asks COMMAND for grep command line and PWD for current directory."
                                      anything-grep-alist
                                      nil t nil nil agbn-last-name))))
                          kinds)))
+    (deactivate-mark)
     (if (cdr result)                    ; length >= 1
         result
       (car result))))
