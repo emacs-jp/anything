@@ -242,6 +242,11 @@ return either nil, or a string, which is the root directory of that file's repos
     (anything sources nil nil nil nil bufname)))
 
 ;; (anything (list (agrep-source "grep -Hin agrep anything-grep.el" default-directory) (agrep-source "grep -Hin pwd anything-grep.el" default-directory)))
+(defvar agrep-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map anything-map)
+    (define-key map (kbd "RET") 'agrep-return)
+    map))
 
 (defun agrep-source (command pwd)
   "Anything Source of `anything-grep'."
@@ -252,12 +257,20 @@ return either nil, or a string, which is the root directory of that file's repos
     (anything-grep)
     (candidate-number-limit . 9999)
     (migemo)
+    (keymap . ,agrep-map)
     ;; to inherit faces
     (candidates-in-buffer)
     (get-line . buffer-substring)
     ,@(when anything-grep-multiline
         '((multiline)
           (real-to-display . agrep-real-to-display)))))
+
+(defun agrep-return ()
+  (interactive)
+  (let ((it (anything-get-selection nil t)))
+    (if (string-match ":[0-9]+:." it)
+        (anything-execute-selection-action)
+      (anything-set-pattern (concat it " ")))))
 
 (defun anything-compile-source--agrep-init (source)
   (if (assq 'anything-grep source)
