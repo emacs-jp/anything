@@ -269,7 +269,7 @@ return either nil, or a string, which is the root directory of that file's repos
   (interactive)
   (let ((it (anything-get-selection nil t)))
     (if (string-match ":[0-9]+:." it)
-        (anything-execute-selection-action)
+        (anything-exit-minibuffer)
       (anything-set-pattern (concat it ": ")))))
 
 (defun anything-compile-source--agrep-init (source)
