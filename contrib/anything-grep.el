@@ -246,6 +246,8 @@ return either nil, or a string, which is the root directory of that file's repos
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map anything-map)
     (define-key map (kbd "RET") 'agrep-return)
+    (define-key map (kbd "C-o") 'agrep-next-source-or-detail)
+    (define-key map (kbd "<right>") 'agrep-next-source-or-detail)
     map))
 
 (defun agrep-source (command pwd)
@@ -271,6 +273,14 @@ return either nil, or a string, which is the root directory of that file's repos
     (if (string-match ":[0-9]+:." it)
         (anything-exit-minibuffer)
       (anything-set-pattern (concat it ": ")))))
+(defun agrep-next-source-or-detail ()
+  (interactive)
+  (anything-move-selection-common
+   (lambda ()
+     (goto-char (or (re-search-forward " details .+\n" (anything-get-next-header-pos) t)
+                    (anything-get-next-header-pos)
+                    (point-min))))
+   'source 'next))
 
 (defun anything-compile-source--agrep-init (source)
   (if (assq 'anything-grep source)
