@@ -785,6 +785,7 @@ See also `anything-set-source-filter'.")
     (define-key map (kbd "C-c C-u")         'anything-force-update)
     (define-key map (kbd "M-p")             'previous-history-element)
     (define-key map (kbd "M-n")             'next-history-element)
+    (define-key map (kbd "M-a")             'anything-mark-all)
     ;; Debugging command
     (define-key map "\C-c\C-x\C-d"          'anything-debug-output)
     (define-key map "\C-c\C-x\C-m"          'anything-display-all-visible-marks)
