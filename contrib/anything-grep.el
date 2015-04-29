@@ -427,11 +427,21 @@ It asks COMMAND for grep command line and PWD for current directory."
     (when (search-forward "$buffers" nil t)
       (delete-region (match-beginning 0) (match-end 0))
       (insert (mapconcat 'shell-quote-argument
-                         (delq nil (mapcar 'buffer-file-name (buffer-list))) " ")))
+                         (delq nil (mapcar 'agrep-abbreviated-buffer-file-name
+                                           (buffer-list))) " ")))
     (when anything-grep-filter-command
       (goto-char (point-max))
       (insert "|" anything-grep-filter-command))
     (buffer-string)))
+
+(defun agrep-abbreviated-buffer-file-name (b)
+  "Abbreviated buffer-file-name by `default-directory'"
+  (let ((dir-re (concat "^" (regexp-quote default-directory))))
+    (anything-aif (buffer-file-name b)
+        (and (file-exists-p it)
+             (if (string-match dir-re it)
+                 (substring it (match-end 0))
+               it)))))
 
 ;; (@* "grep in predefined files")
 (defvar agbn-last-name nil
