@@ -420,18 +420,23 @@ It asks COMMAND for grep command line and PWD for current directory."
                       (format "*anything grep:%s [%s]*" command (abbreviate-file-name pwd))))
 ;; (anything-grep "grep -Hin agrep anything-grep.el" default-directory)
 
+(defun agrep-preprocess-command--buffers ()
+  (when (search-forward "$buffers" nil t)
+    (delete-region (match-beginning 0) (match-end 0))
+    (insert (mapconcat 'shell-quote-argument
+                       (delq nil (mapcar 'agrep-abbreviated-buffer-file-name
+                                         (buffer-list))) " "))))
+(defun agrep-preprocess-command--filter (command)
+  (when anything-grep-filter-command
+    (goto-char (point-max))
+    (insert "|" anything-grep-filter-command)))
+
 (defun agrep-preprocess-command (command)
   (with-temp-buffer
     (insert command)
     (goto-char 1)
-    (when (search-forward "$buffers" nil t)
-      (delete-region (match-beginning 0) (match-end 0))
-      (insert (mapconcat 'shell-quote-argument
-                         (delq nil (mapcar 'agrep-abbreviated-buffer-file-name
-                                           (buffer-list))) " ")))
-    (when anything-grep-filter-command
-      (goto-char (point-max))
-      (insert "|" anything-grep-filter-command))
+    (agrep-preprocess-command--buffers)
+    (agrep-preprocess-command--filter command)
     (buffer-string)))
 
 (defun agrep-abbreviated-buffer-file-name (b)
