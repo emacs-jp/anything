@@ -1825,6 +1825,8 @@ are same args as in `anything'."
 Call `anything' with only ANY-SOURCES and ANY-BUFFER as args."
   (anything :sources any-sources :buffer any-buffer))
 
+(defvar anything-last-frame-or-window-configuration nil)
+
 (defun anything-nest (&rest same-as-anything)
   "Allow calling `anything' whithin a running anything session."
   (with-anything-window
@@ -4435,6 +4437,7 @@ Given pseudo `anything-sources' and `anything-pattern', returns list like
 (provide 'anything)
 
 ;; Local Variables:
+;; byte-compile-warnings: (not cl-functions obsolete)
 ;; coding: utf-8
 ;; End:
 
