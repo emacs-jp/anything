@@ -3520,31 +3520,31 @@ Acceptable values of CREATE-OR-BUFFER:
          (local-bname (format " *anything candidates:%s*%s"
                               anything-source-name
                               (buffer-name anything-current-buffer))))
-    (flet ((register-func ()
-             (setq anything-candidate-buffer-alist
-                   (cons (cons anything-source-name create-or-buffer)
-                         (delete (assoc anything-source-name
-                                        anything-candidate-buffer-alist)
-                                 anything-candidate-buffer-alist))))
-           (kill-buffers-func ()
-             (loop for b in (buffer-list)
-                   if (string-match (format "^%s" (regexp-quote global-bname))
-                                    (buffer-name b))
-                   do (kill-buffer b)))
-           (create-func ()
-             (with-current-buffer
-                 (get-buffer-create (if (eq create-or-buffer 'global)
-                                        global-bname
-                                        local-bname))
-               (buffer-disable-undo)
-               (erase-buffer)
-               (font-lock-mode -1)))
-           (return-func ()
-             (or (get-buffer local-bname)
-                 (get-buffer global-bname)
-                 (anything-aif (assoc-default anything-source-name
-                                              anything-candidate-buffer-alist)
-                     (and (buffer-live-p it) it)))))
+    (cl-flet ((register-func ()
+                             (setq anything-candidate-buffer-alist
+                                   (cons (cons anything-source-name create-or-buffer)
+                                         (delete (assoc anything-source-name
+                                                        anything-candidate-buffer-alist)
+                                                 anything-candidate-buffer-alist))))
+              (kill-buffers-func ()
+                                 (loop for b in (buffer-list)
+                                       if (string-match (format "^%s" (regexp-quote global-bname))
+                                                        (buffer-name b))
+                                       do (kill-buffer b)))
+              (create-func ()
+                           (with-current-buffer
+                               (get-buffer-create (if (eq create-or-buffer 'global)
+                                                      global-bname
+                                                    local-bname))
+                             (buffer-disable-undo)
+                             (erase-buffer)
+                             (font-lock-mode -1)))
+              (return-func ()
+                           (or (get-buffer local-bname)
+                               (get-buffer global-bname)
+                               (anything-aif (assoc-default anything-source-name
+                                                            anything-candidate-buffer-alist)
+                                   (and (buffer-live-p it) it)))))
       (when create-or-buffer
         (register-func)
         (unless (bufferp create-or-buffer)
