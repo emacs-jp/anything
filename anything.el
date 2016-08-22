@@ -1175,7 +1175,8 @@ Otherwise make a list with one element."
   (declare (indent 0) (debug t))
   `(let ((--orig-vars (mapcar (lambda (v)
                                 (cons v (symbol-value v)))
-                              anything-restored-variables))
+                              (append (mapcar 'car anything-let-variables)
+                                      anything-restored-variables)))
          (--post-command-hook-pair (cons post-command-hook
                                          (default-value 'post-command-hook))))
      (setq post-command-hook '(t))
@@ -1865,6 +1866,8 @@ Call `anything' with only ANY-SOURCES and ANY-BUFFER as args."
   "Start initialization of `anything' session.
 For ANY-RESUME ANY-INPUT and ANY-SOURCES See `anything'."
   (anything-log "start initialization: any-resume=%S any-input=%S" any-resume any-input)
+  (loop for (var . val) in anything-let-variables
+        do (set var val))
   (anything-frame-or-window-configuration 'save)
   (setq anything-sources (anything-normalize-sources any-sources))
   (anything-log "sources = %S" anything-sources)
@@ -1872,7 +1875,7 @@ For ANY-RESUME ANY-INPUT and ANY-SOURCES See `anything'."
   (anything-current-position 'save)
   (if (anything-resume-p any-resume)
       (anything-initialize-overlays (anything-buffer-get))
-      (anything-initial-setup))
+    (anything-initial-setup))
   (unless (eq any-resume 'noresume)
     (anything-recent-push anything-buffer 'anything-buffers)
     (setq anything-last-buffer anything-buffer))
