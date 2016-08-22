@@ -2157,14 +2157,15 @@ hooks concerned are `post-command-hook' and `minibuffer-setup-hook'."
 ;; (@* "Core: input handling")
 (defun anything-check-minibuffer-input ()
   "Extract input string from the minibuffer and check if it needs to be handled."
-  (let ((delay (with-current-buffer anything-buffer
-                 (and anything-input-idle-delay
-                      (max anything-input-idle-delay 0.1)))))
-    (if (or (not delay) (anything-action-window))
-        (anything-check-minibuffer-input-1)
+  (when anything-reading-pattern
+    (let ((delay (with-current-buffer anything-buffer
+                   (and anything-input-idle-delay
+                        (max anything-input-idle-delay 0.1)))))
+      (if (or (not delay) (anything-action-window))
+          (anything-check-minibuffer-input-1)
         (anything-new-timer
          'anything-check-minibuffer-input-timer
-         (run-with-idle-timer delay nil 'anything-check-minibuffer-input-1)))))
+         (run-with-idle-timer delay nil 'anything-check-minibuffer-input-1))))))
 
 (defun anything-check-minibuffer-input-1 ()
   "Check minibuffer content."
