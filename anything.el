@@ -1173,10 +1173,11 @@ Otherwise make a list with one element."
   "Restore `anything-restored-variables' after executing BODY.
 `post-command-hook' is handled specially."
   (declare (indent 0) (debug t))
-  `(let ((--orig-vars (mapcar (lambda (v)
-                                (cons v (symbol-value v)))
-                              (append (mapcar 'car anything-let-variables)
-                                      anything-restored-variables)))
+  `(let ((--orig-vars (delq nil
+                            (mapcar (lambda (v)
+                                      (and (boundp v) (cons v (symbol-value v))))
+                                    (append (mapcar 'car anything-let-variables)
+                                            anything-restored-variables))))
          (--post-command-hook-pair (cons post-command-hook
                                          (default-value 'post-command-hook))))
      (setq post-command-hook '(t))
