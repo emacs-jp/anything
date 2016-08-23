@@ -1696,17 +1696,27 @@ It is used to set local variables via `anything-let-internal'.
 This allow to add arguments that are not part of `anything-argument-keys',
 but are valid anything attributes.
 i.e :candidate-number-limit will be bound to `anything-candidate-number-limit'
-in source."
-  ;; (anything-parse-keys '(:sources ((name . "test")
-  ;;                                  (candidates . (a b c)))
-  ;;                        :buffer "toto"
-  ;;                        :candidate-number-limit 4))
-  ;; ==> ((anything-candidate-number-limit . 4))
+in source.
+But the variable is bound, use it.
+
+  (anything-parse-keys '(:sources ((name . \"test\")
+                                   (candidates . (a b c)))
+                                  :buffer \"toto\"
+                                  :truncate-lines t
+                                  :anything-enable-shortcuts t
+                                  :candidate-number-limit 4))
+  => ((truncate-lines . t)
+      (anything-enable-shortcuts . t)
+      (anything-candidate-number-limit . 4))
+"
   (loop for (key value) on keys by #'cddr
         for symname = (substring (symbol-name key) 1)
-        for sym = (intern (if (string-match "^anything-" symname)
-                              symname
-                              (concat "anything-" symname)))
+        for origsym = (intern symname)
+        for sym = (if (boundp origsym)
+                      origsym
+                    (intern (if (string-match "^anything-" symname)
+                                symname
+                              (concat "anything-" symname))))
         unless (memq key anything-argument-keys)
         collect (cons sym value)))
 
