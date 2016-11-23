@@ -863,12 +863,10 @@ So, (anything-read-string-mode 1) and
               (cons cmdname
                     (delete cmdname extended-command-history)))))))
 
-(defun anything-execute-extended-command (_arg)
+(defun anything-execute-extended-command (arg)
   "Replacement of `execute-extended-command'."
-  (interactive
-   (progn
-     (setq anything-execute-extended-command-prefix-arg current-prefix-arg)
-     (list current-prefix-arg)))
+  (interactive "P")
+  (setq anything-execute-extended-command-prefix-arg arg)
   (setq alcs-this-command this-command)
   (anything
    (if (and anything-execute-extended-command-use-kyr
