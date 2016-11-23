@@ -828,37 +828,30 @@ So, (anything-read-string-mode 1) and
 
 ;; I do not want to make anything-c-source-* symbols because they are
 ;; private in `anything-execute-extended-command'.
+(define-anything-type-attribute 'execute-command
+  '((update . alcs-make-candidates)
+    (persistent-action . alcs-describe-function)
+    (action ("Execute" . anything-execute-extended-command-execute)
+            ("Describe Function" . alcs-describe-function)
+            ("Find Function" . alcs-find-function))))
+
 (defvar anything-execute-extended-command-sources
   '(((name . "Emacs Commands History")
      (candidates . extended-command-history)
-     (action . identity)
-     (update . alcs-make-candidates)
-     (persistent-action . alcs-describe-function))
+     (type . execute-command))
     ((name . "Commands")
      (header-name . alcs-header-name)
      (init . (lambda () (anything-candidate-buffer
                          (get-buffer-create alcs-commands-buffer))))
      (candidates-in-buffer)
-     (action . identity)
-     (update . alcs-make-candidates)
-     (persistent-action . alcs-describe-function))
+     (type . execute-command))
     ((name . "New Command")
      (dummy)
-     (action . identity)
-     (persistent-action . alcs-describe-function))))
+     (type . execute-command))))
 
 ;; (with-current-buffer " *command symbols*" (erase-buffer))
-(defun anything-execute-extended-command ()
-  "Replacement of `execute-extended-command'."
-  (interactive)
-  (setq alcs-this-command this-command)
-  (let* ((cmd (anything
-               (if (and anything-execute-extended-command-use-kyr
-                        (require 'anything-kyr-config nil t))
-                   (cons anything-c-source-kyr
-                         anything-execute-extended-command-sources)
-                 anything-execute-extended-command-sources))))
-    (unless (and cmd (commandp (intern-soft cmd)))
+(defun anything-execute-extended-command-execute (cmd)
+  (unless (and cmd (commandp (intern-soft cmd)))
       (error "No command: %s" cmd))
     (setq extended-command-history (cons cmd (delete cmd extended-command-history)))
     (setq cmd (intern cmd))
@@ -866,7 +859,18 @@ So, (anything-read-string-mode 1) and
             (vectorp (symbol-function cmd)))
         (execute-kbd-macro (symbol-function cmd))
       (setq this-command cmd)
-      (call-interactively cmd))))
+      (call-interactively cmd)))
+
+(defun anything-execute-extended-command ()
+  "Replacement of `execute-extended-command'."
+  (interactive)
+  (setq alcs-this-command this-command)
+  (anything
+   (if (and anything-execute-extended-command-use-kyr
+            (require 'anything-kyr-config nil t))
+       (cons anything-c-source-kyr
+             anything-execute-extended-command-sources)
+     anything-execute-extended-command-sources)))
 
 (add-hook 'after-init-hook 'alcs-make-candidates)
 
