@@ -826,15 +826,23 @@ So, (anything-read-string-mode 1) and
                      "\\\\\n" ";" (buffer-substring s2 e2))
                (goto-char s2)))))))
 
-;; I do not want to make anything-c-source-* symbols because they are
-;; private in `anything-execute-extended-command'.
+;;;; M-x
+(defvar anything-execute-extended-command-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map anything-map)
+    (define-key map (kbd "M-x") 'anything-next-line)
+    map))
+
 (define-anything-type-attribute 'execute-command
-  '((update . alcs-make-candidates)
+  `((update . alcs-make-candidates)
+    (keymap . ,anything-execute-extended-command-map)
     (persistent-action . alcs-describe-function)
     (action ("Execute" . anything-execute-extended-command-execute)
             ("Describe Function" . alcs-describe-function)
             ("Find Function" . alcs-find-function))))
 
+;; I do not want to make anything-c-source-* symbols because they are
+;; private in `anything-execute-extended-command'.
 (defvar anything-execute-extended-command-sources
   '(((name . "Emacs Commands History")
      (candidates . extended-command-history)
