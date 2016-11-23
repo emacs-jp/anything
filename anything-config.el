@@ -2859,7 +2859,8 @@ Should be called after others transformers i.e (boring buffers)."
     (type . buffer)
     (match anything-c-buffer-match-major-mode)
     (candidate-transformer anything-c-skip-boring-buffers
-                           anything-c-highlight-buffers)
+                           anything-c-highlight-buffers
+                           anything-c-transform-buffer-display-string)
     (persistent-action . anything-c-buffers-list-persistent-action)
     (keymap . ,anything-c-buffer-map)
     (volatile)
