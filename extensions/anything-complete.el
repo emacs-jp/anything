@@ -857,7 +857,7 @@ So, (anything-read-string-mode 1) and
     (when sym-com
       (setq this-command sym-com
             real-this-command sym-com)
-      (let ((prefix-arg (or anything-current-prefix-arg anything-execute-extended-command-prefix-arg)))
+      (let ((prefix-arg anything-execute-extended-command-prefix-arg))
         (command-execute sym-com 'record)
         (setq extended-command-history
               (cons cmdname
