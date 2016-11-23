@@ -850,20 +850,25 @@ So, (anything-read-string-mode 1) and
      (type . execute-command))))
 
 ;; (with-current-buffer " *command symbols*" (erase-buffer))
-(defun anything-execute-extended-command-execute (cmd)
-  (unless (and cmd (commandp (intern-soft cmd)))
-      (error "No command: %s" cmd))
-    (setq extended-command-history (cons cmd (delete cmd extended-command-history)))
-    (setq cmd (intern cmd))
-    (if (or (stringp (symbol-function cmd))
-            (vectorp (symbol-function cmd)))
-        (execute-kbd-macro (symbol-function cmd))
-      (setq this-command cmd)
-      (call-interactively cmd)))
+(defvar anything-execute-extended-command-prefix-arg nil)
 
-(defun anything-execute-extended-command ()
+(defun anything-execute-extended-command-execute (cmdname)
+  (let ((sym-com (and (stringp cmdname) (intern-soft cmdname))))
+    (when sym-com
+      (setq this-command sym-com
+            real-this-command sym-com)
+      (let ((prefix-arg (or anything-current-prefix-arg anything-execute-extended-command-prefix-arg)))
+        (command-execute sym-com 'record)
+        (setq extended-command-history
+              (cons cmdname
+                    (delete cmdname extended-command-history)))))))
+
+(defun anything-execute-extended-command (_arg)
   "Replacement of `execute-extended-command'."
-  (interactive)
+  (interactive
+   (progn
+     (setq anything-execute-extended-command-prefix-arg current-prefix-arg)
+     (list current-prefix-arg)))
   (setq alcs-this-command this-command)
   (anything
    (if (and anything-execute-extended-command-use-kyr
