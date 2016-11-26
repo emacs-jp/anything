@@ -1158,10 +1158,12 @@ Otherwise make a list with one element."
   "Be sure BODY is excuted in the anything window."
   (declare (indent 0) (debug t))
   `(if anything-test-mode
-       (with-current-buffer (anything-buffer-get)
-         ,@body)
+       (when (get-buffer (anything-buffer-get))
+         (with-current-buffer (anything-buffer-get)
+           ,@body))
+     (when (window-live-p (anything-window))
        (with-selected-window (anything-window)
-         ,@body)))
+         ,@body))))
 
 (defmacro with-anything-current-buffer (&rest body)
   "Eval BODY inside `anything-current-buffer'."
