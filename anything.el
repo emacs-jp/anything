@@ -1749,6 +1749,7 @@ ANY-KEYMAP ANY-DEFAULT ANY-HISTORY See `anything'."
                (with-anything-restore-variables
                  (anything-initialize any-resume any-input any-sources)
                  (anything-display-buffer anything-buffer)
+                 (anything-set-margin)
                  (anything-log "show prompt")
                  (unwind-protect
                       (anything-read-pattern-maybe
@@ -2113,11 +2114,17 @@ If TEST-MODE is non-nil, clear `anything-candidate-cache'."
                        for overlay = (make-overlay (point-min) (point-min)
                                                    (get-buffer buffer))
                        do (overlay-put overlay 'before-string
-                                       (format "%s - " (upcase (make-string 1 key))))
-                       collect overlay))))
+                                       (propertize " " 'display
+                                                   `((margin left-margin) ,(upcase (make-string 1 key)))))
+                       collect overlay)))
+         )
         (anything-digit-overlays
          (mapc 'delete-overlay anything-digit-overlays)
          (setq anything-digit-overlays nil))))
+
+(defun anything-set-margin ()
+  (when anything-enable-shortcuts
+    (set-window-margins (get-buffer-window anything-buffer) 1)))
 
 (defun anything-hooks (setup-or-cleanup)
   "Add or remove hooks according to SETUP-OR-CLEANUP value.
