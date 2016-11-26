@@ -2495,7 +2495,7 @@ if ITEM-COUNT reaches LIMIT, exit from inner loop."
             do
             (anything-skip-noncandidate-line 'forward)
             (move-overlay overlay (point-at-bol) (point-at-bol))
-            (forward-line 1)))))
+            (anything-next-candidate-internal)))))
 
 (defun anything-process-source--direct-insert-match (source)
   "[EXPERIMENTAL] Insert candidates from `anything-candidate-buffer' in SOURCE."
@@ -2949,21 +2949,24 @@ it is \"Candidate\(s\)\" by default."
              (forward-line 1)))))
    'line 'previous))
 
+(defun anything-next-candidate-internal ()
+  "Go to next candidate line.
+Skip candidate separators for multiline sources.
+Do `forward-line' for non-multiline sources."
+  (if (not (anything-pos-multiline-p))
+      (forward-line 1)
+    (let ((header-pos (anything-get-next-header-pos))
+          (separator-pos (anything-get-next-candidate-separator-pos)))
+      (cond ((and separator-pos
+                  (or (null header-pos) (< separator-pos header-pos)))
+             (goto-char separator-pos))
+            (header-pos
+             (goto-char header-pos))))))
+
 (defun anything-next-line ()
   "Move selection to the next line."
   (interactive)
-  (anything-move-selection-common
-   (lambda ()
-     (if (not (anything-pos-multiline-p))
-         (forward-line 1)
-         (let ((header-pos (anything-get-next-header-pos))
-               (separator-pos (anything-get-next-candidate-separator-pos)))
-           (cond ((and separator-pos
-                       (or (null header-pos) (< separator-pos header-pos)))
-                  (goto-char separator-pos))
-                 (header-pos
-                  (goto-char header-pos))))))
-   'line 'next))
+  (anything-move-selection-common 'anything-next-candidate-internal 'line 'next))
 
 (defun anything-previous-page ()
   "Move selection back with a pageful."
