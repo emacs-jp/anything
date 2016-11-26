@@ -1874,10 +1874,16 @@ Call `anything' with only ANY-SOURCES and ANY-BUFFER as args."
 ;;
 (defvar anything-buffers nil
   "All of `anything-buffer' in most recently used order.")
+(defvar anything-shortcut-update-timer nil)
+
 (defun anything-initialize (any-resume any-input any-sources)
   "Start initialization of `anything' session.
 For ANY-RESUME ANY-INPUT and ANY-SOURCES See `anything'."
   (anything-log "start initialization: any-resume=%S any-input=%S" any-resume any-input)
+  (when anything-enable-shortcuts
+    (anything-new-timer
+     'anything-shortcut-update-timer
+     (run-with-idle-timer 0.03 0.03 'anything-move-digit-overlay-maybe)))
   (loop for (var . val) in anything-let-variables
         do (set var val))
   (anything-frame-or-window-configuration 'save)
@@ -2155,6 +2161,7 @@ hooks concerned are `post-command-hook' and `minibuffer-setup-hook'."
     (bury-buffer)
     ;; Be sure we call this from anything-buffer.
     (anything-funcall-foreach 'cleanup))
+  (cancel-timer anything-shortcut-update-timer)
   (anything-new-timer 'anything-check-minibuffer-input-timer nil)
   (anything-kill-async-processes)
   (anything-log-run-hook 'anything-cleanup-hook)
@@ -2467,7 +2474,6 @@ if ITEM-COUNT reaches LIMIT, exit from inner loop."
 
 (defun anything-insert-match-with-digit-overlay (match)
   (declare (special source))
-  (anything-put-digit-overlay-maybe)
   (anything-insert-match match 'insert source))
 
 (defun anything-put-digit-overlay-maybe ()
@@ -2479,6 +2485,17 @@ if ITEM-COUNT reaches LIMIT, exit from inner loop."
                   (point-at-bol)
                   (point-at-bol))
     (incf anything-digit-shortcut-count)))
+
+(defun anything-move-digit-overlay-maybe ()
+  (with-anything-window
+    (save-excursion
+      (goto-char (window-start))
+      (loop for overlay in anything-digit-overlays
+            unless (eobp)
+            do
+            (anything-skip-noncandidate-line 'forward)
+            (move-overlay overlay (point-at-bol) (point-at-bol))
+            (forward-line 1)))))
 
 (defun anything-process-source--direct-insert-match (source)
   "[EXPERIMENTAL] Insert candidates from `anything-candidate-buffer' in SOURCE."
