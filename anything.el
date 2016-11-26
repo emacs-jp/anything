@@ -2588,7 +2588,8 @@ is done on whole `anything-buffer' and not on current source."
                 ;; or 0.1 if == to 0.
                 (max anything-idle-delay anything-input-idle-delay 0.1) nil
                 'anything-process-delayed-sources delayed-sources preselect))))
-        (anything-log "end update")))))
+        (anything-log "end update"))))
+  (anything-move-digit-overlay-maybe))
 
 (defun anything-update-source-p (source)
   "Wheter SOURCE need updating or not."
