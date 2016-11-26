@@ -2161,7 +2161,7 @@ hooks concerned are `post-command-hook' and `minibuffer-setup-hook'."
     (bury-buffer)
     ;; Be sure we call this from anything-buffer.
     (anything-funcall-foreach 'cleanup))
-  (cancel-timer anything-shortcut-update-timer)
+  (anything-new-timer 'anything-shortcut-update-timer nil)
   (anything-new-timer 'anything-check-minibuffer-input-timer nil)
   (anything-kill-async-processes)
   (anything-log-run-hook 'anything-cleanup-hook)
