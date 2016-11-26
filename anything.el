@@ -3037,31 +3037,38 @@ to mark candidates."
   (anything-follow-execute-persistent-action-maybe))
 
 (defun anything-this-command-key ()
-  (event-basic-type (elt (this-command-keys-vector) 0)))
+  (cons (event-basic-type (elt (this-command-keys-vector) 0)) 0))
 ;; (progn (read-key-sequence "Key: ") (p (anything-this-command-key)))
+
+(defun anything-read-prefix-shortcut ()
+  (let ((key0 (read-event "Select shortcut key (1-9 for action): ")))
+    (if (<= ?1 key0 ?9)
+        (cons (read-event "Select shortcut key (candidate): ") (- key0 ?1))
+      (cons key0 0))))
 
 (defun anything-select-with-shortcut-internal (types get-key-func)
   (if (memq anything-enable-shortcuts types)
       (save-selected-window
         (select-window (anything-window))
-        (let* ((key (funcall get-key-func))
+        (let* ((pair (funcall get-key-func))
+               (key (car pair))
+               (action-index (cdr pair))
                (overlay (ignore-errors (nth (position key anything-shortcut-keys)
                                             anything-digit-overlays))))
           (if (not (and overlay (overlay-buffer overlay)))
               (when (numberp key)
                 (select-window (minibuffer-window))
                 (self-insert-command 1))
-              (goto-char (overlay-start overlay))
-              (anything-mark-current-line)
-              (anything-exit-minibuffer))))
-      (self-insert-command 1)))
+            (goto-char (overlay-start overlay))
+            (anything-mark-current-line)
+            (anything-select-nth-action action-index))))
+    (self-insert-command 1)))
 
 (defun anything-select-with-prefix-shortcut ()
   "Invoke default action with prefix shortcut."
   (interactive)
   (anything-select-with-shortcut-internal
-   '(prefix)
-   (lambda () (read-event "Select shortcut key: "))))
+   '(prefix) 'anything-read-prefix-shortcut))
 
 (defun anything-select-with-digit-shortcut ()
   "Invoke default action with digit/alphabet shortcut."
