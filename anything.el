@@ -3323,6 +3323,7 @@ if optional NOUPDATE is non-nil, anything buffer is not changed."
     (delete-minibuffer-contents)
     (insert pattern))
   (when noupdate
+    (anything-set-margin)
     (setq anything-pattern pattern)
     (anything-hooks 'cleanup)
     (run-with-idle-timer 0 nil 'anything-hooks 'setup)))
