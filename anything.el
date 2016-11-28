@@ -3085,7 +3085,9 @@ to mark candidates."
                 (self-insert-command 1))
             (goto-char (overlay-start overlay))
             (anything-mark-current-line)
-            (anything-select-nth-action action-index))))
+            (if (anything-action-window)
+                (anything-exit-minibuffer)
+              (anything-select-nth-action action-index)))))
     (self-insert-command 1)))
 
 (defun anything-select-with-prefix-shortcut ()
