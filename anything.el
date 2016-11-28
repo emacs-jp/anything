@@ -680,7 +680,7 @@ Keys (digit/alphabet) are listed in `anything-shortcut-keys-alist'.")
 
 (defvar anything-shortcut-keys-alist
   '((alphabet . "asdfghjklzxcvbnmqwertyuiop")
-    (prefix   . "asdfghjklzxcvbnmqwertyuiop1234567890")
+    (prefix   . "asdfghjklzxcvbnmqwertyuiop")
     (t        . "123456789")))
 
 (defvar anything-display-source-at-screen-top t
