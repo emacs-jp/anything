@@ -662,7 +662,7 @@ common attributes with a `file' type.")
 Alphabet shortcuts are available now in `anything-enable-shortcuts'.
 `anything-enable-digit-shortcuts' is retained for compatibility.")
 
-(defvar anything-enable-shortcuts nil
+(defvar anything-enable-shortcuts 'prefix
   "*Whether to use digit/alphabet shortcut to select the first nine matches.
 If t then they can be selected using Ctrl+<number>.
 
