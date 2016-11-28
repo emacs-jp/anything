@@ -2919,11 +2919,13 @@ It is determined by UNIT and DIRECTION."
             anything-mode-line-string-real
             (substitute-command-keys (if (listp anything-mode-line-string)
                                          (cadr anything-mode-line-string)
-                                         anything-mode-line-string)))
-      (setq mode-line-format
-            (default-value 'mode-line-format)))
+                                       anything-mode-line-string)))
+    (setq mode-line-format
+          (default-value 'mode-line-format)))
   (setq header-line-format
-        (anything-interpret-value (assoc-default 'header-line source) source)))
+        (if (anything-action-window)
+            "Select Action"
+          (anything-interpret-value (assoc-default 'header-line source) source))))
 
 (defun anything-show-candidate-number (&optional name)
   "Used to display candidate number in mode-line.
