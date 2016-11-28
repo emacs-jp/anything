@@ -2132,7 +2132,7 @@ If TEST-MODE is non-nil, clear `anything-candidate-cache'."
 
 (defun anything-set-margin ()
   (when anything-enable-shortcuts
-    (set-window-margins (get-buffer-window anything-buffer) 1)))
+    (set-window-margins (get-buffer-window (anything-buffer-get)) 1)))
 
 (defun anything-hooks (setup-or-cleanup)
   "Add or remove hooks according to SETUP-OR-CLEANUP value.
@@ -2863,6 +2863,7 @@ If action buffer is selected, back to the anything buffer."
     (set (make-local-variable 'anything-source-filter) nil)
     (set (make-local-variable 'anything-selection-overlay) nil)
     (set (make-local-variable 'anything-digit-overlays) nil)
+    (anything-set-margin)
     (anything-initialize-overlays anything-action-buffer)))
 
 
