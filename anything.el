@@ -2496,7 +2496,8 @@ if ITEM-COUNT reaches LIMIT, exit from inner loop."
             unless (eobp)
             do
             (anything-skip-noncandidate-line 'forward)
-            (move-overlay overlay (point-at-bol) (point-at-bol))
+            (move-overlay overlay (point-at-bol) (point-at-bol)
+                          (get-buffer (anything-buffer-get)))
             (anything-next-candidate-internal)))))
 
 (defun anything-process-source--direct-insert-match (source)
