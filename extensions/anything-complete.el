@@ -215,7 +215,7 @@ used by `anything-lisp-complete-symbol-set-timer' and `anything-apropos'"
   (when alcs-make-candidates-timer
     (cancel-timer alcs-make-candidates-timer))
   (setq alcs-make-candidates-timer
-        (run-with-idle-timer update-period t 'alcs-make-candidates)))
+        (run-with-idle-timer update-period update-period 'alcs-make-candidates)))
 
 (defvar alcs-physical-column-at-startup nil)
 (defun alcs-init (bufname)
