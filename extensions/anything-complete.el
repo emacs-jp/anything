@@ -700,14 +700,15 @@ because it is better implementation."
 
 (defun anything-execute-extended-command-execute (cmdname)
   (let ((sym-com (and (stringp cmdname) (intern-soft cmdname))))
-    (when sym-com
-      (setq this-command sym-com
-            real-this-command sym-com)
-      (let ((prefix-arg anything-execute-extended-command-prefix-arg))
-        (setq extended-command-history
-              (cons cmdname
-                    (delete cmdname extended-command-history)))
-        (command-execute sym-com 'record)))))
+    (unless (and sym-com (commandp sym-com))
+      (error "No such command: %s" cmdname))
+    (setq this-command sym-com
+          real-this-command sym-com)
+    (let ((prefix-arg anything-execute-extended-command-prefix-arg))
+      (setq extended-command-history
+            (cons cmdname
+                  (delete cmdname extended-command-history)))
+      (command-execute sym-com 'record))))
 
 (defun anything-execute-extended-command (arg)
   "Replacement of `execute-extended-command'."
