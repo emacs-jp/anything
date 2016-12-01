@@ -694,32 +694,21 @@ It accepts one argument, selected candidate.")
 
 ;; (@* "`anything-read-string-mode' initialization")
 (defvar anything-read-string-mode nil)
-(unless anything-read-string-mode
-  (defalias 'anything-old-completing-read (symbol-function 'completing-read))
-  (defalias 'anything-old-read-file-name (symbol-function 'read-file-name))
-  (defalias 'anything-old-read-buffer (symbol-function 'read-buffer))
-  (defalias 'anything-old-read-variable (symbol-function 'read-variable))
-  (defalias 'anything-old-read-command (symbol-function 'read-command))
-  (put 'anything-read-string-mode 'orig-read-buffer-function read-buffer-function))
-
-;; (progn (anything-read-string-mode -1) anything-read-string-mode)
-;; (progn (anything-read-string-mode 1) anything-read-string-mode)
-;; (progn (anything-read-string-mode 0) anything-read-string-mode)
-;; (progn (anything-read-string-mode '(string buffer variable command)) anything-read-string-mode)
 (defvar anything-read-string-mode-flags '(string buffer variable command)
   "Saved ARG of `anything-read-string-mode'.")
 (defun anything-read-string-mode (arg)
   "If this minor mode is on, use `anything' version of `completing-read' and `read-file-name'.
 
 ARG also accepts a symbol list. The elements are:
-string:   replace `completing-read'
-buffer:   replace `read-buffer'
-variable: replace `read-variable'
-command:  replace `read-command' and M-x
-file:     replace `read-file-name' and `find-file' (disabled by default)
+string:   replace `completing-read' except `read-file-name'
+command:  replace M-x
+file:     replace `read-file-name' (disabled by default)
 
 So, (anything-read-string-mode 1) and
- (anything-read-string-mode '(string buffer variable command) are identical."
+ (anything-read-string-mode '(string buffer variable command) are identical.
+
+It is deprecated now, fall back to `anything-completion-mode'
+because it is better implementation."
   (interactive "P")
   (when (consp anything-read-string-mode)
     (anything-read-string-mode-uninstall))
@@ -735,28 +724,16 @@ So, (anything-read-string-mode 1) and
 
 (defun anything-read-string-mode-install ()
   ;; redefine to anything version
-  (when (memq 'string anything-read-string-mode)
-    (defalias 'completing-read (symbol-function 'anything-completing-read)))
-  (when (memq 'file anything-read-string-mode)
-    (defalias 'read-file-name (symbol-function 'anything-read-file-name))
-    (substitute-key-definition 'find-file 'anything-find-file global-map))
-  (when (memq 'buffer anything-read-string-mode)
-    (setq read-buffer-function 'anything-read-buffer)
-    (defalias 'read-buffer (symbol-function 'anything-read-buffer)))
-  (when (memq 'variable anything-read-string-mode)
-    (defalias 'read-variable (symbol-function 'anything-read-variable)))
+  (setq anything-completion-types
+        (if (memq 'file anything-read-string-mode)
+            '(complete file) '(complete)))
+  (anything-completion-mode 1)
   (when (memq 'command anything-read-string-mode)
-    (defalias 'read-command (symbol-function 'anything-read-command))
     (substitute-key-definition 'execute-extended-command 'anything-execute-extended-command global-map))
   (message "Installed anything version of read functions."))
 (defun anything-read-string-mode-uninstall ()
   ;; restore to original version
-  (defalias 'completing-read (symbol-function 'anything-old-completing-read))
-  (defalias 'read-file-name (symbol-function 'anything-old-read-file-name))
-  (setq read-buffer-function (get 'anything-read-string-mode 'orig-read-buffer-function))
-  (defalias 'read-buffer (symbol-function 'anything-old-read-buffer))
-  (defalias 'read-variable (symbol-function 'anything-old-read-variable))
-  (defalias 'read-command (symbol-function 'anything-old-read-command))
+  (anything-completion-mode -1)
   (substitute-key-definition 'anything-execute-extended-command 'execute-extended-command global-map)
   (substitute-key-definition 'anything-find-file 'find-file global-map)
   (message "Uninstalled anything version of read functions."))
