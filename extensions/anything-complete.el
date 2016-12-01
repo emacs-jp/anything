@@ -866,10 +866,10 @@ So, (anything-read-string-mode 1) and
       (setq this-command sym-com
             real-this-command sym-com)
       (let ((prefix-arg anything-execute-extended-command-prefix-arg))
-        (command-execute sym-com 'record)
         (setq extended-command-history
               (cons cmdname
-                    (delete cmdname extended-command-history)))))))
+                    (delete cmdname extended-command-history)))
+        (command-execute sym-com 'record)))))
 
 (defun anything-execute-extended-command (arg)
   "Replacement of `execute-extended-command'."
