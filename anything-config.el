@@ -9828,6 +9828,10 @@ that use `anything-comp-read' See `anything-M-x' for example."
 (defvar anything-completion-mode-start-message
   "Anything completion enabled")
 
+(defvar anything-completion-types '(complete file)
+  "If you do not want to use anything version of `read-file-name',
+set this variable to (complete).")
+
 ;;; Specialized handlers
 ;;
 ;;
@@ -10074,9 +10078,14 @@ See documentation of `completing-read' and `all-completions' for details."
       (setq this-command current-command))
     fname))
 
+(defun anything-read-file-name-default (&rest them)
+  "Use normal `read-file-name' even if `anything-completion-mode' is enabled."
+  (let ((completing-read-function 'completing-read-default))
+    (apply 'read-file-name-default them)))
+
 ;;;###autoload
 (define-minor-mode anything-completion-mode
-    "Toggle generic anything completion.
+  "Toggle generic anything completion.
 
 All functions in Emacs that use `completing-read'
 or `read-file-name' and friends will use anything interface
@@ -10093,21 +10102,28 @@ e.g `ffap-alternate-file' and maybe others
 You can add such functions to `anything-completing-read-handlers-alist'
 with a nil value.
 
-Note: This mode will work only partially on Emacs23."
+If you do not want to use anything version of `read-file-name',
+set `anything-completion-types' to (complete)."
   :group 'anything
   :global t
   :lighter anything-completion-mode-string
   (declare (special completing-read-function))
-  (if anything-completion-mode
-      (progn
-        (setq completing-read-function 'anything-completing-read-default
-              read-file-name-function  'anything-generic-read-file-name)
-        (message anything-completion-mode-start-message))
-      (setq completing-read-function (and (fboundp 'completing-read-default)
-                                          'completing-read-default)
-            read-file-name-function  (and (fboundp 'read-file-name-default)
-                                          'read-file-name-default))
-      (message anything-completion-mode-quit-message)))
+  (cond ((and anything-completion-mode
+              (memq 'file anything-completion-types))
+         (setq completing-read-function 'anything-completing-read-default
+               read-file-name-function  'anything-generic-read-file-name)
+         (message anything-completion-mode-start-message))
+        ((and anything-completion-mode
+              (not (memq 'file anything-completion-types)))
+         (setq completing-read-function 'anything-completing-read-default
+               read-file-name-function  'anything-read-file-name-default)
+         (message anything-completion-mode-start-message))
+        ((null anything-completion-mode)
+         (setq completing-read-function (and (fboundp 'completing-read-default)
+                                             'completing-read-default)
+               read-file-name-function  (and (fboundp 'read-file-name-default)
+                                             'read-file-name-default))
+         (message anything-completion-mode-quit-message))))
 
 (defalias 'ac-mode 'anything-completion-mode)
 
