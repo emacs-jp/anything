@@ -113,7 +113,7 @@
 
 ;;; Code:
 
-(defvar anything-complete-version "$Id: anything-complete.el,v 1.86 2010-03-31 23:14:13 rubikitch Exp $")
+(defvar anything-complete-version "20161201")
 (require 'anything-match-plugin)
 (require 'thingatpt)
 (require 'anything-obsolete)
