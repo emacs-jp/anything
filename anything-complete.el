@@ -113,7 +113,7 @@
 
 ;;; Code:
 
-(defvar anything-complete-version "20161201")
+(defvar anything-complete-version "20161203")
 (require 'anything-match-plugin)
 (require 'thingatpt)
 (require 'anything-obsolete)
