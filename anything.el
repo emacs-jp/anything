@@ -3635,7 +3635,8 @@ Acceptable values of CREATE-OR-BUFFER:
                             (setq anything-split-window-state 'vertical))
                           (setq anything-split-window-state 'horizontal)
                           (split-window-horizontally)))
-       anything-buffer))))
+       anything-buffer)
+      (anything-set-margin))))
 
 ;; (@* "Utility: Resize anything window.")
 (defun anything-enlarge-window-1 (n)
