@@ -1760,6 +1760,7 @@ ANY-KEYMAP ANY-DEFAULT ANY-HISTORY See `anything'."
                        (when (and any-history (symbolp any-history)) any-history))
                    (anything-cleanup)))
                (prog1 (unless anything-quit
+                        (setq overriding-local-map old-overridding-local-map)
                         (anything-execute-selection-action-1))
                  (anything-log (concat "[End session] " (make-string 41 ?-)))))
            (quit
@@ -2831,26 +2832,24 @@ Coerce source with coerce function."
   "Select an action for the currently selected candidate.
 If action buffer is selected, back to the anything buffer."
   (interactive)
-  (if (not anything-alive-p)
-      (anything-fall-back-to-minibuffer-complete)
-    (anything-log-run-hook 'anything-select-action-hook)
-    (cond ((get-buffer-window anything-action-buffer 'visible)
-           (set-window-buffer (get-buffer-window anything-action-buffer)
-                              anything-buffer)
-           (kill-buffer anything-action-buffer)
-           (anything-set-pattern anything-input 'noupdate))
-          (t
-           (setq anything-saved-selection (anything-get-selection))
-           (unless anything-saved-selection
-             (error "Nothing is selected"))
-           (setq anything-saved-current-source (anything-get-current-source))
-           (let ((actions (anything-get-action)))
-             (if (functionp actions)
-                 (message "Sole action: %s" actions)
-               (anything-show-action-buffer actions)
-               (anything-delete-minibuffer-contents)
-               (setq anything-pattern 'dummy) ; so that it differs from the previous one
-               (anything-check-minibuffer-input)))))))
+  (anything-log-run-hook 'anything-select-action-hook)
+  (cond ((get-buffer-window anything-action-buffer 'visible)
+         (set-window-buffer (get-buffer-window anything-action-buffer)
+                            anything-buffer)
+         (kill-buffer anything-action-buffer)
+         (anything-set-pattern anything-input 'noupdate))
+        (t
+         (setq anything-saved-selection (anything-get-selection))
+         (unless anything-saved-selection
+           (error "Nothing is selected"))
+         (setq anything-saved-current-source (anything-get-current-source))
+         (let ((actions (anything-get-action)))
+           (if (functionp actions)
+               (message "Sole action: %s" actions)
+             (anything-show-action-buffer actions)
+             (anything-delete-minibuffer-contents)
+             (setq anything-pattern 'dummy) ; so that it differs from the previous one
+             (anything-check-minibuffer-input))))))
 
 (defun anything-fall-back-to-minibuffer-complete ()
   (call-interactively 'minibuffer-complete))
