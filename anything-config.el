@@ -9784,29 +9784,38 @@ that use `anything-comp-read' See `anything-M-x' for example."
                                (if volatile
                                    (append src '((volatile)))
                                    src))))
-           (anything-execute-action-at-once-if-one exec-when-only-one))
-      (or
-       (anything
-        :sources src-list
-        :input initial-input
-        :default default
-        :preselect preselect
-        :prompt prompt
-        :resume 'noresume
-        :keymap anything-map
-        :history (and (symbolp input-history) input-history)
-        :buffer buffer)
-       (when (and (eq anything-exit-status 0)
-                  (eq must-match 'confirm))
-         ;; Return empty string only if it is the DEFAULT
-         ;; value and anything-pattern is empty.
-         ;; otherwise return anything-pattern
-         (if (and (string= anything-pattern "") default)
-             default (identity anything-pattern)))
-       (unless (or (eq anything-exit-status 1)
-                   must-match) ; FIXME this should not be needed now.
-         default)
-       (keyboard-quit)))))
+           (anything-execute-action-at-once-if-one exec-when-only-one)
+           (ret (or
+                 (anything
+                  :sources src-list
+                  :input initial-input
+                  :default default
+                  :preselect preselect
+                  :prompt prompt
+                  :resume 'noresume
+                  :keymap anything-map
+                  :history (and (symbolp input-history) input-history)
+                  :buffer buffer)
+                 (when (and (eq anything-exit-status 0)
+                            (eq must-match 'confirm))
+                   ;; Return empty string only if it is the DEFAULT
+                   ;; value and anything-pattern is empty.
+                   ;; otherwise return anything-pattern
+                   (if (and (string= anything-pattern "") default)
+                       default (identity anything-pattern)))
+                 (unless (or (eq anything-exit-status 1)
+                             must-match) ; FIXME this should not be needed now.
+                   default)
+                 (keyboard-quit)))
+           (not-uninternp (intern-soft ret))
+           (retsym (if (stringp ret) (intern ret) ret)))
+      (unwind-protect
+          (if (or (memq retsym collection)
+                  (assq retsym collection))
+              retsym
+            ret)
+        (unless not-uninternp
+          (unintern retsym obarray))))))
 
 ;; Generic completing-read
 ;;
