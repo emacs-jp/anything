@@ -9558,6 +9558,22 @@ Support install, remove and purge actions."
 ;;; Anything `completing-read' replacement
 ;;
 ;;
+(defvar anything-comp-read-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map anything-map)
+    (define-key map (kbd "<C-return>") 'anything-cr-empty-string)
+    (define-key map (kbd "<M-RET>") 'anything-cr-empty-string)
+    map)
+  "Keymap for `anything-comp-read'.")
+
+(defun anything-cr-empty-string ()
+  "Return empty string."
+  (interactive)
+  (when anything-alive-p
+    (anything-exit-and-execute-action
+     (lambda (_candidate)
+       (identity "")))))
+
 (defun anything-comp-read-get-candidates (collection &optional test sort-fn alistp)
   "Convert COLLECTION to list removing elements that don't match TEST.
 See `anything-comp-read' about supported COLLECTION arguments.
@@ -9622,7 +9638,7 @@ Do nothing, just return candidate list unmodified."
                                    (persistent-action nil)
                                    (persistent-help "DoNothing")
                                    (mode-line anything-mode-line-string)
-                                   (keymap anything-map)
+                                   (keymap anything-comp-read-map)
                                    (name "Anything Completions")
                                    candidates-in-buffer
                                    exec-when-only-one
