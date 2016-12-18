@@ -1436,6 +1436,18 @@ LONG-DOC is displayed below attribute name and short documentation."
 
 (put 'anything-document-attribute 'lisp-indent-function 2)
 
+(defun anything-exit-and-execute-action (action)
+  "Exit current anything session and execute ACTION.
+Argument ACTION is a function called with one arg (candidate)
+and part of the actions of current source.
+
+Use this on commands invoked from key-bindings, but not
+on action functions invoked as action from the action menu,
+i.e functions called with RET."
+  (setq anything-saved-action action)
+  (setq anything-saved-selection (or (anything-get-selection) ""))
+  (anything-exit-minibuffer))
+
 (defun anything-interpret-value (value &optional source)
   "Interpret VALUE as variable, function or literal.
 If VALUE is a function, call it with no arguments and return the value.
