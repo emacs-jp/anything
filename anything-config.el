@@ -9823,11 +9823,14 @@ that use `anything-comp-read' See `anything-M-x' for example."
                              must-match) ; FIXME this should not be needed now.
                    default)
                  (keyboard-quit)))
-           (not-uninternp (intern-soft ret))
+           (not-uninternp (condition-case _
+                              (intern-soft ret)
+                            (error t)))
            (retsym (if (stringp ret) (intern ret) ret)))
       (unwind-protect
-          (if (or (memq retsym collection)
-                  (assq retsym collection))
+          (if (and (listp collection)
+                   (or (memq retsym collection)
+                       (assq retsym collection)))
               retsym
             ret)
         (unless not-uninternp
