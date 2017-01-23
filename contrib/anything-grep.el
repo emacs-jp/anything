@@ -74,9 +74,8 @@
   "Function to visit a file with.
 It takes one argument, a file name to visit.")
 
-(defvar anything-grep-multiline nil
-  "If non-nil, use multi-line display. It is prettier.
-Use anything.el v1.147 or newer.")
+(defvar anything-grep-multiline t
+  "If non-nil, use multi-line display. It is prettier.")
 
 (defvar anything-grep-fontify-file-name t
   "If non-nil, fontify file name and line number of matches.")
