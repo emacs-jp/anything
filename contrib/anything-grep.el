@@ -59,7 +59,7 @@
 
 ;;; Code:
 
-(defvar anything-grep-version "$Id: anything-grep.el,v 1.27 2010-03-21 11:31:04 rubikitch Exp $")
+(defvar anything-grep-version "")
 (require 'anything-config)
 (require 'grep)
 (require 'format-spec)
