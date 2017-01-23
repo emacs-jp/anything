@@ -172,8 +172,9 @@ return either nil, or a string, which is the root directory of that file's repos
 
 (defun agrep-return ()
   (interactive)
-  (let ((it (anything-get-selection nil t)))
-    (if (string-match ":[0-9]+:." it)
+  (let ((it (anything-get-selection)))
+    (if (or anything-grep-multiline
+            (string-match ":[0-9]+:." it))
         (anything-exit-minibuffer)
       (anything-set-pattern (concat it ": ")))))
 (defun agrep-next-source-or-detail ()
