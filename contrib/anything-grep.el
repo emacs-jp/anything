@@ -47,14 +47,15 @@
 ;; have to wait when you grep the target for the first time. But once
 ;; the target is on the disk cache, queries are grepped at lightning
 ;; speed. Even if older Pentium4 computer, grepping from 180MB takes
-;; only 0.2s! GNU grep is amazingly fast.
+;; only 0.2s!
 
 ;; `anything-grep-by-name' asks query and predefined location. It is
-;; good idea to have ack (ack-grep), grep implemented in Perl, to
-;; exclude unneeded files. Such as RCS, .svn and so on.
+;; good idea to have ripgrep (rg), VERY FAST grep implemented in Rust, to
+;; exclude unneeded files. Such as .git, .svn and so on.
 
-;; ack -- better than grep, a power search tool for programmers
-;;  http://petdance.com/ack/
+;; ripgrep -- ripgrep combines the usability of The Silver Searcher
+;;            with the raw speed of grep.
+;;  https://github.com/BurntSushi/ripgrep
 
 ;;; Code:
 
