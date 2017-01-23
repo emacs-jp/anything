@@ -1,7 +1,6 @@
 ;;; anything-grep.el --- search refinement of grep result with anything
-;; $Id: anything-grep.el,v 1.27 2010-03-21 11:31:04 rubikitch Exp $
 
-;; Copyright (C) 2008, 2009, 2010  rubikitch
+;; Copyright (C) 2008-2015, 2017  rubikitch
 
 ;; Author: rubikitch <rubikitch@ruby-lang.org>
 ;; Keywords: convenience, unix
@@ -56,103 +55,6 @@
 
 ;; ack -- better than grep, a power search tool for programmers
 ;;  http://petdance.com/ack/
-
-
-
-;;; History:
-
-;; $Log: anything-grep.el,v $
-;; Revision 1.27  2010-03-21 11:31:04  rubikitch
-;; Resume bug fix
-;;
-;; Revision 1.26  2010/03/21 11:13:30  rubikitch
-;; `anything-grep' works asynchronously
-;;
-;; Revision 1.25  2010/03/21 06:34:25  rubikitch
-;; New function: `anything-grep-by-name-reversed'
-;;
-;; Revision 1.24  2010/03/21 06:28:42  rubikitch
-;; update copyright
-;;
-;; Revision 1.23  2010/03/21 06:28:32  rubikitch
-;; refactoring
-;;
-;; Revision 1.22  2009/12/28 08:56:56  rubikitch
-;; `anything-grep-by-name': INCOMPATIBLE!!! swap optional arguments
-;; `anything-grep-by-name' can utilize `repeat-complex-command'.
-;;
-;; Revision 1.21  2009/12/18 11:01:11  rubikitch
-;; `agrep-real-to-display': erase "nil" message
-;;
-;; Revision 1.20  2009/06/25 03:36:38  rubikitch
-;; `agrep-real-to-display': avoid error
-;; auto-document
-;;
-;; Revision 1.19  2009/02/03 21:06:49  rubikitch
-;; fontify file name and line number.
-;; New variable: `anything-grep-fontify-file-name'
-;;
-;; Revision 1.18  2009/02/03 20:48:12  rubikitch
-;; multi-line support.
-;; New variable: `anything-grep-multiline'
-;;
-;; Revision 1.17  2009/02/03 20:35:03  rubikitch
-;; Use `anything-quit-if-no-candidate' not to open *anything* buffer when no matches found.
-;;
-;; Revision 1.16  2009/01/20 09:56:19  rubikitch
-;; New variable: `anything-grep-filter-command'
-;;
-;; Revision 1.15  2009/01/03 07:04:30  rubikitch
-;; copyright
-;;
-;; Revision 1.14  2009/01/02 16:00:07  rubikitch
-;; * Fixed invalid value of `anything-grep-alist'.
-;; * Implemented functionality to search all buffers with `buffer-file-name'.
-;;   See `anything-grep-alist'.
-;;
-;; Revision 1.13  2008/12/29 09:43:59  rubikitch
-;; Rename variables:
-;;  `agrep-goto-hook' => `anything-grep-goto-hook'
-;;  `agrep-find-file-function' => `anything-grep-find-file-function'
-;;
-;; Revision 1.12  2008/12/29 09:40:23  rubikitch
-;; document
-;;
-;; Revision 1.11  2008/12/29 07:58:37  rubikitch
-;; refactoring
-;;
-;; Revision 1.10  2008/10/21 18:02:02  rubikitch
-;; use *anything grep* buffer instead.
-;;
-;; Revision 1.9  2008/10/12 17:17:23  rubikitch
-;; `anything-grep-by-name': swapped query order
-;;
-;; Revision 1.8  2008/10/09 00:33:40  rubikitch
-;; New variable: `anything-grep-save-buffers-before-grep'
-;;
-;; Revision 1.7  2008/10/09 00:26:00  rubikitch
-;; `anything-grep-by-name': nil argument
-;;
-;; Revision 1.6  2008/10/05 15:43:09  rubikitch
-;; changed spec: `anything-grep-alist'
-;;
-;; Revision 1.5  2008/10/02 18:27:55  rubikitch
-;; Use original fontify code instead of font-lock.
-;; New variable: `agrep-find-file-function'
-;;
-;; Revision 1.4  2008/10/01 18:18:18  rubikitch
-;; use ack-grep command to select files for search.
-;;
-;; Revision 1.3  2008/10/01 17:18:59  rubikitch
-;; silence byte compiler
-;;
-;; Revision 1.2  2008/10/01 17:17:59  rubikitch
-;; many bug fix
-;; New command: `anything-grep-by-name'
-;;
-;; Revision 1.1  2008/10/01 10:58:59  rubikitch
-;; Initial revision
-;;
 
 ;;; Code:
 
@@ -541,8 +443,6 @@ It asks NAME for location name and QUERY."
 
 ;;; visited file
 ;;;; unit test
-;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/el-expectations.el")
-;; (install-elisp "http://www.emacswiki.org/cgi-bin/wiki/download/el-mock.el")
 (dont-compile
   (when (fboundp 'expectations)
     (expectations
