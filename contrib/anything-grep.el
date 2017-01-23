@@ -212,7 +212,7 @@ GNU grep is expected for COMMAND. The grep result is colorized."
   (let ((process-environment process-environment)
         proc
         (tmpfile (make-temp-file "agrep-")))
-    (when (eq grep-highlight-matches t)
+    (when grep-highlight-matches
       ;; Modify `process-environment' locally bound in `call-process-shell-command'.
       (setenv "GREP_OPTIONS" (concat (getenv "GREP_OPTIONS") " --color=always"))
       ;; for GNU grep 2.5.1
