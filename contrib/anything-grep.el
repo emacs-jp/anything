@@ -171,7 +171,7 @@
   "Function to visit a file with.
 It takes one argument, a file name to visit.")
 
-(defvar anything-grep-multiline t
+(defvar anything-grep-multiline nil
   "If non-nil, use multi-line display. It is prettier.
 Use anything.el v1.147 or newer.")
 
