@@ -117,9 +117,9 @@ The format is:
 (defvar anything-grep-filter-command nil
   "If non-nil, filter the result of grep command.
 
-For example, normalizing many Japanese encodings to EUC-JP,
-set this variable to \"ruby -rkconv -pe '$_.replace $_.toeuc'\".
-The command is converting standard input to EUC-JP line by line. ")
+For example, normalizing many Japanese encodings to UTF-8,
+set this variable to \"ruby -rkconv -pe '$_.replace $_.toutf8'\".
+The command is converting standard input to UTF-8 line by line. ")
 
 (defvar anything-grep-repository-root-function (if (require 'repository-root nil t)
                                                      'repository-root
