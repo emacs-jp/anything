@@ -84,6 +84,13 @@ It takes one argument, a file name to visit.")
   (or (executable-find "zsh")
       (executable-find "sh")))
 
+(defvar anything-grep-ripgrep-command
+  (when (executable-find "rg")
+    "rg -n --smart-case --no-heading")
+  "If non-nil, use ripgrep (rg) instead of standard grep.
+ripgrep is VERY VERY FAST grep implementation.
+")
+
 (defvar anything-grep-alist
   '(("buffers" ("egrep -Hin %s $buffers" "/"))
     ("memo" ("ack-grep -af | xargs egrep -Hin %s" "~/memo"))
@@ -311,11 +318,14 @@ Its contents is fontified grep result."
 It asks COMMAND for grep command line and PWD for current directory."
   (interactive
    (progn
-     (grep-compute-defaults)
-     (let ((default (grep-default-command)))
+
+     (let ((default (concat (or anything-grep-ripgrep-command
+                                (progn (grep-compute-defaults)
+                                       (grep-default-command)))
+                            " ")))
        (list (read-from-minibuffer "Run grep (like this): "
 				   (if current-prefix-arg
-				       default grep-command)
+				       default (or grep-command default))
 				   nil nil 'grep-history
 				   (if current-prefix-arg nil default))
              (read-directory-name "Directory: " default-directory default-directory t)))))
