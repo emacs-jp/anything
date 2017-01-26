@@ -8738,6 +8738,7 @@ When nil, fallback to `browse-url-browser-function'.")
            (setq anything-candidate-number-limit 9999)
            (anything candidate nil nil nil nil
                      anything-source-select-buffer)))
+        ("Copy variable name" . anything-c-kill-new)
         ("Describe variable" . describe-variable)
         ("Find variable" . find-variable)))
     (persistent-action . describe-variable)
